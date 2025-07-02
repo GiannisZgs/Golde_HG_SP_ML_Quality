@@ -64,6 +64,26 @@ function [M,varargout] = batch_inter_sensor_metrics(beat1, beat2, metric,varargi
                     
                     [p1, edges] = histcounts(beat1_extreme, nbins, 'Normalization', 'probability');
                     p2 = histcounts(beat2_extreme, edges, 'Normalization', 'probability');
+                    
+%                     figure;
+%                     hold on;
+% 
+%                     % Plot the histograms
+%                     plot(edges(1:end-1), p1, 'LineWidth', 2, 'Color', [0.1 0.45 0.8], 'DisplayName', 'Hg Sensor');
+%                     plot(edges(1:end-1), p2, 'LineWidth', 2, 'Color', [0.8 0.2 0.2], 'DisplayName', 'AgCl Sensor');
+% 
+%                     % Optionally, add area shading under curves (comment out if not needed)
+%                     area(edges(1:end-1), p1, 'FaceAlpha', 0.2, 'FaceColor', [0.1 0.45 0.8], 'EdgeColor', 'none');
+%                     area(edges(1:end-1), p2, 'FaceAlpha', 0.2, 'FaceColor', [0.8 0.2 0.2], 'EdgeColor', 'none');
+% 
+%                     % Aesthetics
+%                     xlabel('Amplitude ((X-mean(X))/|X|');
+%                     ylabel('Probability');
+%                     title('Normalized Probability Histograms');
+%                     legend('Location', 'northeast');
+%                     grid on;
+%                     box on;
+                    
                     eps_val = 1e-10;
                     p1 = p1 + eps_val;
                     p2 = p2 + eps_val;

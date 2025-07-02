@@ -5,12 +5,17 @@ close all;
 % Adjusting these can significantly impact detection accuracy.
 p_search_window_ms = 250; % Max time before R-peak to look for P-wave
 t_search_window_ms = 350; % Max time after R-peak to look for T-wave
-
+calcMetrics = 0; %boolean to control metric calculation
 %% Tune this up_percentile
 
 up_percentile = 95;
 bottom_percentile = 1;
-data = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\ECG_HG_quality_dataset.mat");
+use_filters = 0;
+if use_filters
+    data = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\ECG_HG_quality_dataset_MA.mat");
+else
+    data = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\ECG_HG_quality_dataset_no_filters.mat");
+end
 fs = data.data_struct.fs_ecg;
 p_search_window = (p_search_window_ms/1000)*fs;
 t_search_window = (t_search_window_ms/1000)*fs;
@@ -224,161 +229,184 @@ for f = 1:length(struct_fields)
     %plot(hg_ecg_segment)
     %plot(hg_qrs_segment,hg_ecg_segment(hg_qrs_segment),'og');
     
-    %% Calculate quality metrics
-    %Inter-sensor for same channel of different sensors (same placement)
-    %Intra-sensor: differences between peaks of the same recording
-    for ch = 1:length(fields(HG_qrs_annotations))
-        
-        %Inter-sensor Cross-correlation 
-        if (~(any(any(isnan(hg_segmented_beats.(['ch',num2str(ch)]))))) && ~(any(any(isnan(agcl_segmented_beats.(['ch',num2str(ch)]))))))    
-            [CorrMat.(struct_fields{f}).Xsensor.(['ch',num2str(ch)]),LagMat.(struct_fields{f}).(['ch',num2str(ch)])] = batch_inter_sensor_metrics(hg_segmented_beats.(['ch',num2str(ch)]), agcl_segmented_beats.(['ch',num2str(ch)]), 'xcorr');
-        else
-            CorrMat.(struct_fields{f}).Xsensor.(['ch',num2str(ch)]) = [];
-            LagMat.(struct_fields{f}).(['ch',num2str(ch)]) = [];
+    %% Save heartbeat profiles for post-processing
+    profiling_struct.(fieldd).HG = hg_segmented_beats;
+    profiling_struct.(fieldd).AgCl = agcl_segmented_beats;
+    if calcMetrics
+        %% Calculate quality metrics
+        %Inter-sensor for same channel of different sensors (same placement)
+        %Intra-sensor: differences between peaks of the same recording
+        for ch = 1:length(fields(HG_qrs_annotations))
+
+            %Inter-sensor Cross-correlation 
+            if (~(any(any(isnan(hg_segmented_beats.(['ch',num2str(ch)]))))) && ~(any(any(isnan(agcl_segmented_beats.(['ch',num2str(ch)]))))))    
+                [CorrMat.(struct_fields{f}).Xsensor.(['ch',num2str(ch)]),LagMat.(struct_fields{f}).(['ch',num2str(ch)])] = batch_inter_sensor_metrics(hg_segmented_beats.(['ch',num2str(ch)]), agcl_segmented_beats.(['ch',num2str(ch)]), 'xcorr');
+            else
+                CorrMat.(struct_fields{f}).Xsensor.(['ch',num2str(ch)]) = [];
+                LagMat.(struct_fields{f}).(['ch',num2str(ch)]) = [];
+            end
+            %Intra-sensor correlation
+            if ~(any(any(isnan(hg_segmented_beats.(['ch',num2str(ch)])))))
+                [corrmat,~] = batch_intra_sensor_metrics(hg_segmented_beats.(['ch',num2str(ch)]),'xcorr');
+                CorrMat.(struct_fields{f}).HG.(['ch',num2str(ch)]) = triu(corrmat,1); %Keep upper_triangular matrix
+            else
+                CorrMat.(struct_fields{f}).HG.(['ch',num2str(ch)]) = [];
+            end
+            if ~(any(any(isnan(agcl_segmented_beats.(['ch',num2str(ch)])))))    
+                [corrmat,~] = batch_intra_sensor_metrics(agcl_segmented_beats.(['ch',num2str(ch)]),'xcorr');
+                CorrMat.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = triu(corrmat,1);
+            else
+                CorrMat.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = [];
+            end
+
+            %Inter-sensor NRMSE
+            if (~(any(any(isnan(hg_segmented_beats.(['ch',num2str(ch)]))))) && ~(any(any(isnan(agcl_segmented_beats.(['ch',num2str(ch)])))))) 
+                NrmseMat.(struct_fields{f}).Xsensor.(['ch',num2str(ch)])= batch_inter_sensor_metrics(hg_segmented_beats.(['ch',num2str(ch)]), agcl_segmented_beats.(['ch',num2str(ch)]), 'nrmse');
+            else
+                NrmseMat.(struct_fields{f}).Xsensor.(['ch',num2str(ch)]) = [];
+            end
+            %Intra-sensor NRMSE
+            if ~(any(any(isnan(hg_segmented_beats.(['ch',num2str(ch)])))))
+                nrmsematHG= batch_intra_sensor_metrics(hg_segmented_beats.(['ch',num2str(ch)]), 'nrmse');
+                NrmseMat.(struct_fields{f}).HG.(['ch',num2str(ch)]) = triu(nrmsematHG,1);
+            else
+                NrmseMat.(struct_fields{f}).HG.(['ch',num2str(ch)]) = [];
+            end
+            if ~(any(any(isnan(agcl_segmented_beats.(['ch',num2str(ch)])))))    
+                nrmsematAgCl= batch_intra_sensor_metrics(agcl_segmented_beats.(['ch',num2str(ch)]), 'nrmse');
+                NrmseMat.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = triu(nrmsematAgCl,1);
+            else
+                NrmseMat.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = [];
+            end
+
+            %Inter-sensor JSD of Extreme Values
+            if (~(any(any(isnan(hg_segmented_beats.(['ch',num2str(ch)]))))) && ~(any(any(isnan(agcl_segmented_beats.(['ch',num2str(ch)]))))))    
+                [JsdMat.(struct_fields{f}).Xsensor.(['ch',num2str(ch)]),~,p1_jsd_x,p2_jsd_x,edges_jsd_x] = batch_inter_sensor_metrics(hg_segmented_beats.(['ch',num2str(ch)]), agcl_segmented_beats.(['ch',num2str(ch)]), 'jsd',100);
+            else
+                JsdMat.(struct_fields{f}).Xsensor.(['ch',num2str(ch)]) = [];
+            end
+
+            %Intra-sensor JSD of Extreme Values
+            if ~(any(any(isnan(hg_segmented_beats.(['ch',num2str(ch)])))))
+                [jsdmatHG,~,p1_jsd_hg,p2_jsd_hg,edges_jsd_hg] = batch_intra_sensor_metrics(hg_segmented_beats.(['ch',num2str(ch)]), 'jsd',100);
+                JsdMat.(struct_fields{f}).HG.(['ch',num2str(ch)]) = triu(jsdmatHG,1);
+            else
+                JsdMat.(struct_fields{f}).HG.(['ch',num2str(ch)]) = [];
+            end
+            if ~(any(any(isnan(agcl_segmented_beats.(['ch',num2str(ch)])))))    
+                [jsdmatAgCl,~,p1_jsd_ag,p2_jsd_ag,edges_jsd_ag] = batch_intra_sensor_metrics(agcl_segmented_beats.(['ch',num2str(ch)]), 'jsd',100);
+                JsdMat.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = triu(jsdmatAgCl,1);
+            else
+                JsdMat.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = [];
+            end
+
+            %Inter-sensor Cosine Similarity
+            if (~(any(any(isnan(hg_segmented_beats.(['ch',num2str(ch)]))))) && ~(any(any(isnan(agcl_segmented_beats.(['ch',num2str(ch)])))))) 
+                CosMat.(struct_fields{f}).Xsensor.(['ch',num2str(ch)]) = batch_inter_sensor_metrics(hg_segmented_beats.(['ch',num2str(ch)]), agcl_segmented_beats.(['ch',num2str(ch)]), 'cosine');    
+            else
+                CosMat.(struct_fields{f}).Xsensor.(['ch',num2str(ch)]) = [];
+            end
+
+            %Intra-sensor Cosine Similarity
+            if ~(any(any(isnan(hg_segmented_beats.(['ch',num2str(ch)])))))
+                cosmatHG = batch_intra_sensor_metrics(hg_segmented_beats.(['ch',num2str(ch)]), 'cosine');
+                CosMat.(struct_fields{f}).HG.(['ch',num2str(ch)]) = triu(cosmatHG);
+            else
+                CosMat.(struct_fields{f}).HG.(['ch',num2str(ch)]) = [];
+            end
+            if ~(any(any(isnan(agcl_segmented_beats.(['ch',num2str(ch)])))))    
+                cosmatAgCl = batch_intra_sensor_metrics(agcl_segmented_beats.(['ch',num2str(ch)]), 'cosine');
+                CosMat.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = triu(cosmatAgCl);
+            else
+                CosMat.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = [];
+            end
+
+            %Inter-sensor Earth Mover's Distance
+            if (~(any(any(isnan(hg_segmented_beats.(['ch',num2str(ch)]))))) && ~(any(any(isnan(agcl_segmented_beats.(['ch',num2str(ch)]))))))   
+                [EmdMat.(struct_fields{f}).Xsensor.(['ch',num2str(ch)]),p1_emd_x,p2_emd_x,edges_emd_x] = batch_inter_sensor_metrics(hg_segmented_beats.(['ch',num2str(ch)]), agcl_segmented_beats.(['ch',num2str(ch)]), 'emd',100);        
+            else
+                EmdMat.(struct_fields{f}).Xsensor.(['ch',num2str(ch)]) = [];
+            end
+            %Intra-sensor Earth Mover's Distance
+            if ~(any(any(isnan(hg_segmented_beats.(['ch',num2str(ch)])))))
+                [emdmatHG,p1_emd_hg,p2_emd_hg] = batch_intra_sensor_metrics(hg_segmented_beats.(['ch',num2str(ch)]), 'emd',100);                    
+                EmdMat.(struct_fields{f}).HG.(['ch',num2str(ch)]) = triu(emdmatHG,1);
+            else
+                EmdMat.(struct_fields{f}).HG.(['ch',num2str(ch)]) = [];
+            end
+            if ~(any(any(isnan(agcl_segmented_beats.(['ch',num2str(ch)])))))    
+                [emdmatAgCl,p1_emd_ag,p2_emd_ag] = batch_intra_sensor_metrics(agcl_segmented_beats.(['ch',num2str(ch)]), 'emd',100);
+                EmdMat.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = triu(emdmatAgCl,1);
+            else
+                EmdMat.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = [];
+            end
+
+            % Calculation of Signal quality (Only intra)
+            if ~(any(any(isnan(agcl_segmented_beats.(['ch',num2str(ch)])))))    
+                [H_w,H_s,ZCR1,ZCR2,SF,Compr] = waveform_quality_scores(agcl_segmented_beats.(['ch',num2str(ch)]));
+                SigQual.WaveEntropy.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = H_w;
+                SigQual.SpecEntropy.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = H_s;
+                SigQual.ZCR1.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = ZCR1;
+                SigQual.ZCR2.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = ZCR2;
+                SigQual.SpecFlatness.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = SF;
+                SigQual.Compress.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = Compr;
+            else
+                SigQual.WaveEntropy.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = [];
+                SigQual.SpecEntropy.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = [];
+                SigQual.ZCR1.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = [];
+                SigQual.ZCR2.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = [];
+                SigQual.SpecFlatness.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = [];
+                SigQual.Compress.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = [];
+            end
+            if ~(any(any(isnan(hg_segmented_beats.(['ch',num2str(ch)])))))
+                [H_w,H_s,ZCR1,ZCR2,SF,Compr] = waveform_quality_scores(hg_segmented_beats.(['ch',num2str(ch)]));
+                SigQual.WaveEntropy.(struct_fields{f}).HG.(['ch',num2str(ch)]) = H_w;
+                SigQual.SpecEntropy.(struct_fields{f}).HG.(['ch',num2str(ch)]) = H_s;
+                SigQual.ZCR1.(struct_fields{f}).HG.(['ch',num2str(ch)]) = ZCR1;
+                SigQual.ZCR2.(struct_fields{f}).HG.(['ch',num2str(ch)]) = ZCR2;
+                SigQual.SpecFlatness.(struct_fields{f}).HG.(['ch',num2str(ch)]) = SF;
+                SigQual.Compress.(struct_fields{f}).HG.(['ch',num2str(ch)]) = Compr;
+            else
+                SigQual.WaveEntropy.(struct_fields{f}).HG.(['ch',num2str(ch)]) = [];
+                SigQual.SpecEntropy.(struct_fields{f}).HG.(['ch',num2str(ch)]) = [];
+                SigQual.ZCR1.(struct_fields{f}).HG.(['ch',num2str(ch)]) = [];
+                SigQual.ZCR2.(struct_fields{f}).HG.(['ch',num2str(ch)]) = [];
+                SigQual.SpecFlatness.(struct_fields{f}).HG.(['ch',num2str(ch)]) = [];
+                SigQual.Compress.(struct_fields{f}).HG.(['ch',num2str(ch)]) = [];
+            end
         end
-        %Intra-sensor correlation
-        if ~(any(any(isnan(hg_segmented_beats.(['ch',num2str(ch)])))))
-            [corrmat,~] = batch_intra_sensor_metrics(hg_segmented_beats.(['ch',num2str(ch)]),'xcorr');
-            CorrMat.(struct_fields{f}).HG.(['ch',num2str(ch)]) = triu(corrmat,1); %Keep upper_triangular matrix
-        else
-            CorrMat.(struct_fields{f}).HG.(['ch',num2str(ch)]) = [];
-        end
-        if ~(any(any(isnan(agcl_segmented_beats.(['ch',num2str(ch)])))))    
-            [corrmat,~] = batch_intra_sensor_metrics(agcl_segmented_beats.(['ch',num2str(ch)]),'xcorr');
-            CorrMat.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = triu(corrmat,1);
-        else
-            CorrMat.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = [];
-        end
-        
-        %Inter-sensor NRMSE
-        if (~(any(any(isnan(hg_segmented_beats.(['ch',num2str(ch)]))))) && ~(any(any(isnan(agcl_segmented_beats.(['ch',num2str(ch)])))))) 
-            NrmseMat.(struct_fields{f}).Xsensor.(['ch',num2str(ch)])= batch_inter_sensor_metrics(hg_segmented_beats.(['ch',num2str(ch)]), agcl_segmented_beats.(['ch',num2str(ch)]), 'nrmse');
-        else
-            NrmseMat.(struct_fields{f}).Xsensor.(['ch',num2str(ch)]) = [];
-        end
-        %Intra-sensor NRMSE
-        if ~(any(any(isnan(hg_segmented_beats.(['ch',num2str(ch)])))))
-            nrmsematHG= batch_intra_sensor_metrics(hg_segmented_beats.(['ch',num2str(ch)]), 'nrmse');
-            NrmseMat.(struct_fields{f}).HG.(['ch',num2str(ch)]) = triu(nrmsematHG,1);
-        else
-            NrmseMat.(struct_fields{f}).HG.(['ch',num2str(ch)]) = [];
-        end
-        if ~(any(any(isnan(agcl_segmented_beats.(['ch',num2str(ch)])))))    
-            nrmsematAgCl= batch_intra_sensor_metrics(agcl_segmented_beats.(['ch',num2str(ch)]), 'nrmse');
-            NrmseMat.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = triu(nrmsematAgCl,1);
-        else
-            NrmseMat.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = [];
-        end
-        
-        %Inter-sensor JSD of Extreme Values
-        if (~(any(any(isnan(hg_segmented_beats.(['ch',num2str(ch)]))))) && ~(any(any(isnan(agcl_segmented_beats.(['ch',num2str(ch)]))))))    
-            [JsdMat.(struct_fields{f}).Xsensor.(['ch',num2str(ch)]),~,p1_jsd_x,p2_jsd_x,edges_jsd_x] = batch_inter_sensor_metrics(hg_segmented_beats.(['ch',num2str(ch)]), agcl_segmented_beats.(['ch',num2str(ch)]), 'jsd',100);
-        else
-            JsdMat.(struct_fields{f}).Xsensor.(['ch',num2str(ch)]) = [];
-        end
-        
-        %Intra-sensor JSD of Extreme Values
-        if ~(any(any(isnan(hg_segmented_beats.(['ch',num2str(ch)])))))
-            [jsdmatHG,~,p1_jsd_hg,p2_jsd_hg,edges_jsd_hg] = batch_intra_sensor_metrics(hg_segmented_beats.(['ch',num2str(ch)]), 'jsd',100);
-            JsdMat.(struct_fields{f}).HG.(['ch',num2str(ch)]) = triu(jsdmatHG,1);
-        else
-            JsdMat.(struct_fields{f}).HG.(['ch',num2str(ch)]) = [];
-        end
-        if ~(any(any(isnan(agcl_segmented_beats.(['ch',num2str(ch)])))))    
-            [jsdmatAgCl,~,p1_jsd_ag,p2_jsd_ag,edges_jsd_ag] = batch_intra_sensor_metrics(agcl_segmented_beats.(['ch',num2str(ch)]), 'jsd',100);
-            JsdMat.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = triu(jsdmatAgCl,1);
-        else
-            JsdMat.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = [];
-        end
-        
-        %Inter-sensor Cosine Similarity
-        if (~(any(any(isnan(hg_segmented_beats.(['ch',num2str(ch)]))))) && ~(any(any(isnan(agcl_segmented_beats.(['ch',num2str(ch)])))))) 
-            CosMat.(struct_fields{f}).Xsensor.(['ch',num2str(ch)]) = batch_inter_sensor_metrics(hg_segmented_beats.(['ch',num2str(ch)]), agcl_segmented_beats.(['ch',num2str(ch)]), 'cosine');    
-        else
-            CosMat.(struct_fields{f}).Xsensor.(['ch',num2str(ch)]) = [];
-        end
-            
-        %Intra-sensor Cosine Similarity
-        if ~(any(any(isnan(hg_segmented_beats.(['ch',num2str(ch)])))))
-            cosmatHG = batch_intra_sensor_metrics(hg_segmented_beats.(['ch',num2str(ch)]), 'cosine');
-            CosMat.(struct_fields{f}).HG.(['ch',num2str(ch)]) = triu(cosmatHG);
-        else
-            CosMat.(struct_fields{f}).HG.(['ch',num2str(ch)]) = [];
-        end
-        if ~(any(any(isnan(agcl_segmented_beats.(['ch',num2str(ch)])))))    
-            cosmatAgCl = batch_intra_sensor_metrics(agcl_segmented_beats.(['ch',num2str(ch)]), 'cosine');
-            CosMat.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = triu(cosmatAgCl);
-        else
-            CosMat.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = [];
-        end
-        
-        %Inter-sensor Earth Mover's Distance
-        if (~(any(any(isnan(hg_segmented_beats.(['ch',num2str(ch)]))))) && ~(any(any(isnan(agcl_segmented_beats.(['ch',num2str(ch)]))))))   
-            [EmdMat.(struct_fields{f}).Xsensor.(['ch',num2str(ch)]),p1_emd_x,p2_emd_x,edges_emd_x] = batch_inter_sensor_metrics(hg_segmented_beats.(['ch',num2str(ch)]), agcl_segmented_beats.(['ch',num2str(ch)]), 'emd',100);        
-        else
-            EmdMat.(struct_fields{f}).Xsensor.(['ch',num2str(ch)]) = [];
-        end
-        %Intra-sensor Earth Mover's Distance
-        if ~(any(any(isnan(hg_segmented_beats.(['ch',num2str(ch)])))))
-            [emdmatHG,p1_emd_hg,p2_emd_hg] = batch_intra_sensor_metrics(hg_segmented_beats.(['ch',num2str(ch)]), 'emd',100);                    
-            EmdMat.(struct_fields{f}).HG.(['ch',num2str(ch)]) = triu(emdmatHG,1);
-        else
-            EmdMat.(struct_fields{f}).HG.(['ch',num2str(ch)]) = [];
-        end
-        if ~(any(any(isnan(agcl_segmented_beats.(['ch',num2str(ch)])))))    
-            [emdmatAgCl,p1_emd_ag,p2_emd_ag] = batch_intra_sensor_metrics(agcl_segmented_beats.(['ch',num2str(ch)]), 'emd',100);
-            EmdMat.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = triu(emdmatAgCl,1);
-        else
-            EmdMat.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = [];
-        end
-        
-        % Calculation of Signal quality (Only intra)
-        if ~(any(any(isnan(agcl_segmented_beats.(['ch',num2str(ch)])))))    
-            [H_w,H_s,ZCR1,ZCR2,SF,Compr] = waveform_quality_scores(agcl_segmented_beats.(['ch',num2str(ch)]));
-            SigQual.WaveEntropy.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = H_w;
-            SigQual.SpecEntropy.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = H_s;
-            SigQual.ZCR1.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = ZCR1;
-            SigQual.ZCR2.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = ZCR2;
-            SigQual.SpecFlatness.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = SF;
-            SigQual.Compress.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = Compr;
-        else
-            SigQual.WaveEntropy.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = [];
-            SigQual.SpecEntropy.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = [];
-            SigQual.ZCR1.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = [];
-            SigQual.ZCR2.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = [];
-            SigQual.SpecFlatness.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = [];
-            SigQual.Compress.(struct_fields{f}).AgCl.(['ch',num2str(ch)]) = [];
-        end
-        if ~(any(any(isnan(hg_segmented_beats.(['ch',num2str(ch)])))))
-            [H_w,H_s,ZCR1,ZCR2,SF,Compr] = waveform_quality_scores(hg_segmented_beats.(['ch',num2str(ch)]));
-            SigQual.WaveEntropy.(struct_fields{f}).HG.(['ch',num2str(ch)]) = H_w;
-            SigQual.SpecEntropy.(struct_fields{f}).HG.(['ch',num2str(ch)]) = H_s;
-            SigQual.ZCR1.(struct_fields{f}).HG.(['ch',num2str(ch)]) = ZCR1;
-            SigQual.ZCR2.(struct_fields{f}).HG.(['ch',num2str(ch)]) = ZCR2;
-            SigQual.SpecFlatness.(struct_fields{f}).HG.(['ch',num2str(ch)]) = SF;
-            SigQual.Compress.(struct_fields{f}).HG.(['ch',num2str(ch)]) = Compr;
-        else
-            SigQual.WaveEntropy.(struct_fields{f}).HG.(['ch',num2str(ch)]) = [];
-            SigQual.SpecEntropy.(struct_fields{f}).HG.(['ch',num2str(ch)]) = [];
-            SigQual.ZCR1.(struct_fields{f}).HG.(['ch',num2str(ch)]) = [];
-            SigQual.ZCR2.(struct_fields{f}).HG.(['ch',num2str(ch)]) = [];
-            SigQual.SpecFlatness.(struct_fields{f}).HG.(['ch',num2str(ch)]) = [];
-            SigQual.Compress.(struct_fields{f}).HG.(['ch',num2str(ch)]) = [];
-        end
+        %avg_corr_ch1 = mean(reshape(CorrMat_ch1,1,size(CorrMat_ch1,1)*size(CorrMat_ch1,2)));
+        %std_corr_ch1 = std(reshape(CorrMat_ch1,1,size(CorrMat_ch1,1)*size(CorrMat_ch1,2)));
+        %avg_corr_ch1_hg = mean(CorrMat_ch1_HG(find(CorrMat_ch1_HG~=0)));
+        %std_corr_ch1_hg = std(CorrMat_ch1_HG(find(CorrMat_ch1_HG~=0)));    
+        %avg_mse_ch1 = mean(reshape(MSE_mat_ch1,1,size(MSE_mat_ch1,1)*size(MSE_mat_ch1,2)));
+        %std_mse_ch1 = std(reshape(MSE_mat_ch1,1,size(MSE_mat_ch1,1)*size(MSE_mat_ch1,2)));
+        %avg_nrmse_ch1 = mean(reshape(NRMSE_mat_ch1,1,size(NRMSE_mat_ch1,1)*size(NRMSE_mat_ch1,2)));
+        %std_nrmse_ch1 = std(reshape(NRMSE_mat_ch1,1,size(NRMSE_mat_ch1,1)*size(NRMSE_mat_ch1,2)));              
+        %avg_cos_ch1 = mean(reshape(Cos_mat_ch1,1,size(Cos_mat_ch1,1)*size(Cos_mat_ch1,2)));
+        %std_cos_ch1 = std(reshape(Cos_mat_ch1,1,size(Cos_mat_ch1,1)*size(Cos_mat_ch1,2)));
     end
-    %avg_corr_ch1 = mean(reshape(CorrMat_ch1,1,size(CorrMat_ch1,1)*size(CorrMat_ch1,2)));
-    %std_corr_ch1 = std(reshape(CorrMat_ch1,1,size(CorrMat_ch1,1)*size(CorrMat_ch1,2)));
-    %avg_corr_ch1_hg = mean(CorrMat_ch1_HG(find(CorrMat_ch1_HG~=0)));
-    %std_corr_ch1_hg = std(CorrMat_ch1_HG(find(CorrMat_ch1_HG~=0)));    
-    %avg_mse_ch1 = mean(reshape(MSE_mat_ch1,1,size(MSE_mat_ch1,1)*size(MSE_mat_ch1,2)));
-    %std_mse_ch1 = std(reshape(MSE_mat_ch1,1,size(MSE_mat_ch1,1)*size(MSE_mat_ch1,2)));
-    %avg_nrmse_ch1 = mean(reshape(NRMSE_mat_ch1,1,size(NRMSE_mat_ch1,1)*size(NRMSE_mat_ch1,2)));
-    %std_nrmse_ch1 = std(reshape(NRMSE_mat_ch1,1,size(NRMSE_mat_ch1,1)*size(NRMSE_mat_ch1,2)));              
-    %avg_cos_ch1 = mean(reshape(Cos_mat_ch1,1,size(Cos_mat_ch1,1)*size(Cos_mat_ch1,2)));
-    %std_cos_ch1 = std(reshape(Cos_mat_ch1,1,size(Cos_mat_ch1,1)*size(Cos_mat_ch1,2)));
-            
     fprintf("Finished results extraction of subject %s \n",struct_fields{f}) 
 end
-save('C:\Users\giann\OneDrive\Desktop\ECG HG paper\similarity_analysis_results.mat','CorrMat','NrmseMat','CosMat','JsdMat','EmdMat','SigQual','-v7.3');
+%save('C:\Users\giann\OneDrive\Desktop\ECG HG paper\similarity_analysis_results.mat','CorrMat','NrmseMat','CosMat','JsdMat','EmdMat','SigQual','-v7.3');
 
+%% Save profiles for further analysis in MATLAB
+if use_filters
+    save('C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\heartbeat_profiles_MA.mat','profiling_struct')
+else
+    save('C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\heartbeat_profiles_no_filters.mat','profiling_struct')
+end
+%% Save results for processing in R
+if calcMetrics
+    results_struct.CorrMat = CorrMat;
+    results_struct.NrmseMat = NrmseMat;
+    results_struct.CosMat = CosMat;
+    results_struct.JsdMat = JsdMat;
+    results_struct.EmdMat = EmdMat;
+    results_struct.SigQual = SigQual;
 
+    jsonStr = jsonencode(results_struct);
+    fid = fopen('C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\similarity_analysis_results.json','w');
+    fwrite(fid,jsonStr,'char');
+    fclose(fid);
+end

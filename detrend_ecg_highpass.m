@@ -1,8 +1,6 @@
-function ecg_detrended = detrend_ecg_highpass(ecg_data, fs)
+function ecg_detrended = detrend_ecg_highpass(ecg_data, fs, cutoff, order)
 
     % High-pass filter parameters
-    cutoff = 0.1;  % Cutoff frequency (Hz)
-    order = 4;
     [b, a] = butter(order, cutoff / (fs / 2), 'high');
     
     % Apply filter to each channel
