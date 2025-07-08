@@ -4,9 +4,9 @@ close all;
 %% This should be done across patients, across sensors, across channels
 use_filters = 1;
 if use_filters
-    data = load("C:\Users\OneDrive\giann\Desktop\ECG HG paper\results_data\single_participant_heartbeat_profiles_MA.mat");
+    data = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\single_participant_heartbeat_profiles_MA.mat");
 else
-    data = load("C:\Users\OneDrive\giann\Desktop\ECG HG paper\results_data\single_participant_heartbeat_profiles_no_filters.mat");
+    data = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\single_participant_heartbeat_profiles_no_filters.mat");
 end
 
 fs = 200;
@@ -150,7 +150,7 @@ for ch = 1:3
     mse.(['ch',num2str(ch)]) = mse_cluster;
 end
 
-save("C:\Users\OneDrive\giann\Desktop\ECG HG paper\results_data\single_participant_channel_id_results.mat","centroids","features","tsne_vis","xcorr","mse");
+save("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\single_participant_channel_id_results.mat","centroids","features","tsne_vis","xcorr","mse");
 
 %sgtitle('Centroid Profiles obtained from Clustering Analysis for 4 participants')
 

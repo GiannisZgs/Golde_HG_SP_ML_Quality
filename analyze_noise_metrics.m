@@ -1,12 +1,12 @@
 clear;
 close all;
-metrics = load("C:\Users\OneDrive\giann\Desktop\ECG HG paper\results_data\metrics_deviation_from_noise.mat");
+metrics = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\metrics_deviation_from_noise.mat");
 
 metrics = metrics.metrics;
 top = 5;
 struct_fields = fields(metrics);
 signals = ["AgCl","HG1","HG2"];
-metric_names = ["trend"];%["trend","vlf","low_freq","mid_freq","high_freq","powerline","powerline_harmonic","ultra_high1_freq","ultra_high2_freq"];
+metric_names = ["ultra_high2_freq"];%["trend","vlf","low_freq","mid_freq","high_freq","powerline","powerline_harmonic","ultra_high1_freq","ultra_high2_freq"];
 for m = 1:length(metric_names) 
     agcl_ch1 = [];    agcl_ch2 = [];    agcl_ch3 = [];
     hg1_ch1 = [];    hg1_ch2 = [];    hg1_ch3 = [];
@@ -16,15 +16,15 @@ for m = 1:length(metric_names)
         
         if str2num(fieldd(2:end)) == 11
             fprintf("Skipping participant %s for incomplete data",fieldd)
-            agcl_ch1 = [agcl_ch1 -100];
-            agcl_ch2 = [agcl_ch2 -100];
-            agcl_ch3 = [agcl_ch3 -100];
-            hg1_ch1 = [hg1_ch1 -100];
-            hg1_ch2 = [hg1_ch2 -100];
-            hg1_ch3 = [hg1_ch3 -100];
-            hg2_ch1 = [hg2_ch1 -100];
-            hg2_ch2 = [hg2_ch2 -100];
-            hg2_ch3 = [hg2_ch3 -100];
+%             agcl_ch1 = [agcl_ch1 -100];
+%             agcl_ch2 = [agcl_ch2 -100];
+%             agcl_ch3 = [agcl_ch3 -100];
+%             hg1_ch1 = [hg1_ch1 -100];
+%             hg1_ch2 = [hg1_ch2 -100];
+%             hg1_ch3 = [hg1_ch3 -100];
+%             hg2_ch1 = [hg2_ch1 -100];
+%             hg2_ch2 = [hg2_ch2 -100];
+%             hg2_ch3 = [hg2_ch3 -100];
             continue
         end
     
@@ -73,6 +73,30 @@ for m = 1:length(metric_names)
         end
     end
 end
+
+%% Plot boxplot on selected metrics
+group_names = {'AgCl Channel 1', 'HG Channel 1', 'AgCl Channel 2', 'HG Channel 2', 'AgCl Channel 3', 'HG Channel 3'};  
+metric_data = [agcl_ch1; hg1_ch1; agcl_ch2; hg1_ch2; agcl_ch3;hg1_ch3]';
+nGroups = 6;
+p_vals = NaN(nGroups);
+
+% Perform pairwise Wilcoxon rank-sum tests (non-parametric)
+for i = 1:nGroups
+    for j = i+1:nGroups
+        if j-i == 1 && mod(i,2) == 1
+            p_vals(i,j) = ranksum(metric_data(:,i), metric_data(:,j));
+        end
+    end
+end
+
+figure;
+boxplot(metric_data, 'Labels', group_names)
+title('UHF2 Power Deviation - Processed from Raw - Distribution of Participants');
+ylabel('Power Spectral Density (dB/Hz)');
+hold on;
+group_positions = 1:nGroups;
+y_offset = 0.05 * range(ylim); 
+p_significance_on_plot(p_vals, y_offset, group_positions);
 
 %% All metrics need to be close to 1
 agcl_ch1 = abs(agcl_ch1 - 1);
