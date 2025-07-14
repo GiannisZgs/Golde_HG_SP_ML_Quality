@@ -52,7 +52,7 @@ no_HG1 = [];
 no_HG2 = [];
 no_HG = [];
 no_all = [];
-for p = 1:length(participants)
+for p = 5%1:length(participants)
     p_struct = struct();
     flag_empty = zeros(length(signals),1);
     for s = 1:length(signals)
@@ -139,6 +139,13 @@ for p = 1:length(participants)
         %detrended_ECG_hp02 = detrend_ecg_highpass(ECG,data_struct.fs_ecg,0.2,hp_order);
         %detrended_ECG_hp03 = detrend_ecg_highpass(ECG,data_struct.fs_ecg,0.3,hp_order);
         
+        if s==1
+            agcl = ECG(35000:41000,:);
+            t_vec = linspace(0,size(agcl,1)/data_struct.fs_ecg,size(agcl,1));
+        elseif s == 3
+            hg = ECG(49000:55000,:);
+            t_vec = linspace(0,size(hg,1)/data_struct.fs_ecg,size(hg,1));
+        end
         
         if use_filters
             %ECG = ECG-mean(ECG);
@@ -167,6 +174,29 @@ for p = 1:length(participants)
 %             close all;
 %         end
         % For all bands
+
+        %For figure 1c,  
+        if s==1
+            agcl = ECG(35000:41000,:);
+            agcl_lp = ECG_lp(35000:41000,:);
+            agcl_notch1 = ECG_just_notch1(35000:41000,:);
+            agcl_notch2 = ECG_just_notch2(35000:41000,:);
+            agcl_hp_VLF = ECG_just_hp_VLF(35000:41000,:); 
+            agcl_MA = ECG_just_MA(35000:41000,:); 
+            agcl_all_filters = ECG_filtered(35000:41000,:);  
+            save('agcl_p5.mat','t_vec','agcl','agcl_lp','agcl_notch1','agcl_notch2','agcl_hp_VLF','agcl_MA','agcl_all_filters')
+        elseif s == 3
+            hg = ECG(49000:55000,:);
+            hg_lp = ECG_lp(49000:55000,:);
+            hg_notch1 = ECG_just_notch1(49000:55000,:);
+            hg_notch2 = ECG_just_notch2(49000:55000,:);
+            hg_hp_VLF = ECG_just_hp_VLF(49000:55000,:); 
+            hg_MA = ECG_just_MA(49000:55000,:); 
+            hg_all_filters = ECG_filtered(49000:55000,:); 
+            save('hg_p5.mat','t_vec','hg','hg_lp','hg_notch1','hg_notch2','hg_hp_VLF','hg_MA','hg_all_filters')
+        end
+        
+        
         
         %% Measure metrics to quantify the analogies of noise in AgCl and HG
         plot_flag = false;

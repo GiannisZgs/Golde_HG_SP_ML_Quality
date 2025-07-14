@@ -130,9 +130,9 @@ function metrics = deviation_from_noise_psd(ecg_raw, ecg_processed, fs, target_b
                 zoom_plot_idx = zoom_plot_idx + 1;
             end
             if same_sensor
-                filename = sprintf('C:\Users\OneDrive\giann\Desktop\ECG HG paper\matlab_plots\power_spectral_densities_same_sensor\PSD_%s_%s_ch_%d.png', participant, sensor, ch);
+                filename = sprintf('C:\\Users\\giann\\OneDrive\\Desktop\\ECG HG paper\\matlab_plots\\manually_cleaned_power_spectral_density_same_sensor\\PSD_%s_%s_ch_%d.png', participant, sensor, ch);
             else
-                filename = sprintf('C:\Users\OneDrive\giann\Desktop\ECG HG paper\matlab_plots\power_spectral_densities_diff_sensor\PSD_%s_%s_ch_%d.png', participant, sensor, ch);
+                filename = sprintf('C:\\Users\\giann\\OneDrive\\Desktop\\ECG HG paper\\matlab_plots\\manually_cleaned_power_spectral_density_diff_sensor\\PSD_%s_%s_ch_%d.png', participant, sensor, ch);
             end
             saveas(fig, filename);  
             
@@ -161,9 +161,9 @@ function metrics = deviation_from_noise_psd(ecg_raw, ecg_processed, fs, target_b
     if plot_flag
         json_str = jsonencode(all_psd_data);
         if same_sensor
-            filename = sprintf('C:\Users\OneDrive\giann\Desktop\ECG HG paper\matlab_plots\power_spectral_densities_same_sensor_data\PSD_%s_%s.json', participant, sensor);
+            filename = sprintf('C:\\Users\\giann\\OneDrive\\Desktop\\ECG HG paper\\matlab_plots\\manually_cleaned_power_spectral_density_same_sensor_data\\PSD_%s_%s.json', participant, sensor);
         else
-            filename = sprintf('C:\Users\OneDrive\giann\Desktop\ECG HG paper\matlab_plots\power_spectral_densities_diff_sensor_data\PSD_%s_%s.json', participant, sensor);
+            filename = sprintf('C:\\Users\\giann\\OneDrive\\Desktop\\ECG HG paper\\matlab_plots\\manually_cleaned_power_spectral_density_diff_sensor_data\\PSD_%s_%s.json', participant, sensor);
         end
         fid = fopen(filename, 'w');
         fwrite(fid, json_str, 'char');

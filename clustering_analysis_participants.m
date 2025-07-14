@@ -2,12 +2,21 @@ clear;
 close all;
 %% Implement a clustering analysis to extract average heartbeat profiles
 %% This should be done across patients, across sensors, across channels
-use_filters = 1;
+use_filters = 0;
 plot_profiles = true;
-if use_filters
-    data = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\heartbeat_profiles_MA.mat");
-else
-    data = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\heartbeat_profiles_no_filters.mat");
+manually_cleaned = 1;
+if manually_cleaned
+    if use_filters
+        data = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\manually_cleaned_heartbeat_profiles_MA.mat");
+    else
+        data = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\manually_cleaned_heartbeat_profiles_no_filters.mat");
+    end
+else    
+    if use_filters
+        data = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\heartbeat_profiles_MA.mat");
+    else
+        data = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\heartbeat_profiles_no_filters.mat");
+    end
 end
 profiles = data.profiling_struct;
 num_clusters_multiplier = 1; %number of clusters will be the number of participants times this
@@ -119,9 +128,13 @@ end
 %Cluster profiles
 
 plot_count = 1;
-plot_participants = {'p1','p5','p8', 'p9','p10','p13','p23','p25','p41'};
-%plot_participants = fields(profiles);
-%figure;
+if manually_cleaned
+    plot_participants = {'p1','p5','p10','p39'};
+else
+    plot_participants = {'p1','p5','p8', 'p9','p10','p13','p23','p25','p41'};
+    %plot_participants = fields(profiles);
+end
+    %figure;
 for p = 1:length(plot_participants)
     participant = plot_participants(p); participant = participant{1};
     plot_count = 1;
@@ -322,9 +335,17 @@ end
 % xlabel('Channel 3'); %ylabel('Cross-correlation');
 
 %% Save results and data for further processing
-if use_filters
-    save("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\participant_id_results.mat","centroids","features","tsne_vis","xcorr","mse");
+if manually_cleaned
+    if use_filters
+    save("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\manually_cleaned_participant_id_results.mat","centroids","features","tsne_vis","xcorr","mse");
 else
-    save("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\participant_id_results_no_filters.mat","centroids","features","tsne_vis","xcorr","mse");
+    save("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\manually_cleaned_participant_id_results_no_filters.mat","centroids","features","tsne_vis","xcorr","mse");
+    end
+else
+    if use_filters
+        save("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\participant_id_results.mat","centroids","features","tsne_vis","xcorr","mse");
+    else
+        save("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\participant_id_results_no_filters.mat","centroids","features","tsne_vis","xcorr","mse");
+    end
 end
 

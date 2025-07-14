@@ -3,12 +3,20 @@ close all;
 %% Implement a clustering analysis to extract average heartbeat profiles
 %% This should be done across patients, across sensors, across channels
 use_filters = 1;
-if use_filters
-    data = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\heartbeat_profiles_MA.mat");
-else
-    data = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\heartbeat_profiles_no_filters.mat");
+manually_cleaned = 1;
+if manually_cleaned
+    if use_filters
+        data = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\manually_cleaned_heartbeat_profiles_MA.mat");
+    else
+        data = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\manually_cleaned_heartbeat_profiles_no_filters.mat");
+    end
+else    
+    if use_filters
+        data = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\heartbeat_profiles_MA.mat");
+    else
+        data = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\heartbeat_profiles_no_filters.mat");
+    end
 end
-
 fs = 200;
 profiles = data.profiling_struct;
 num_clusters_multiplier = 1; %number of clusters will be the number of participants times this
@@ -149,8 +157,10 @@ for ch = 1:3
     xcorr.(['ch',num2str(ch)]) = xcorr_cluster;
     mse.(['ch',num2str(ch)]) = mse_cluster;
 end
-
-save("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\channel_id_results.mat","centroids","features","tsne_vis","xcorr","mse");
-
+if manually_cleaned
+    save("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\manually_cleaned_channel_id_results.mat","centroids","features","tsne_vis","xcorr","mse");
+else
+    save("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\channel_id_results.mat","centroids","features","tsne_vis","xcorr","mse");
+end
 %sgtitle('Centroid Profiles obtained from Clustering Analysis for 4 participants')
 

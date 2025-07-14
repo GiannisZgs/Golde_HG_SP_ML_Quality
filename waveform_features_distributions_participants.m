@@ -1,5 +1,12 @@
-data = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\participant_id_results");
+clear
+close all
 
+manually_cleaned = 1;
+if manually_cleaned
+    data = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\manually_cleaned_participant_id_results");
+else
+    data = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\participant_id_results");
+end
 features = data.features;
 
 sensors = ["AgCl","HG"];
@@ -111,7 +118,7 @@ peak2peak_labels = cellfun(@(x, i) repmat(i, numel(x), 1), peak_to_peak, num2cel
 peak2peak_labels = vertcat(peak2peak_labels{:})';
 peak2peak = cell2mat(peak_to_peak');
 figure;
-boxplot(peak2peak, group_labels, 'Labels', group_names)
+boxplot(peak2peak, peak2peak_labels, 'Labels', group_names)
 title('Peak-to-Peak ECG Profile Amplitude - Distribution of Participants');
 ylabel('Peak-to-Peak Amplitude (mV)');
 hold on;

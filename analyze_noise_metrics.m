@@ -1,6 +1,12 @@
 clear;
 close all;
-metrics = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\metrics_deviation_from_noise.mat");
+
+manually_cleaned = 1;
+if manually_cleaned
+    metrics = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\metrics_manually_cleaned_deviation_from_noise.mat");
+else
+    metrics = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\metrics_deviation_from_noise.mat");
+end
 
 metrics = metrics.metrics;
 top = 5;
@@ -91,8 +97,8 @@ end
 
 figure;
 boxplot(metric_data, 'Labels', group_names)
-title('UHF2 Power Deviation - Processed from Raw - Distribution of Participants');
-ylabel('Power Spectral Density (dB/Hz)');
+title('Ultra High Frequency 2 - Processed to Raw Ratio - Distribution of Participants');
+ylabel('Ratio ((dB/Hz)/(dB/Hz))');
 hold on;
 group_positions = 1:nGroups;
 y_offset = 0.05 * range(ylim); 

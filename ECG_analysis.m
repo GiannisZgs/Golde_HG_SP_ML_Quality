@@ -11,12 +11,27 @@ calcMetrics = 0; %boolean to control metric calculation
 up_percentile = 95;
 bottom_percentile = 1;
 use_filters = 0;
-if use_filters
-    data = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\ECG_HG_quality_dataset_MA.mat");
+manually_cleaned = 1;
+if manually_cleaned
+    if use_filters
+        data = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\ECG_HG_manually_cleaned_quality_dataset_MA.mat");
+    else
+        data = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\ECG_HG_manually_cleaned_quality_dataset_no_filters.mat");
+    end
+    data.data_struct = data.new_data_struct;
 else
-    data = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\ECG_HG_quality_dataset_no_filters.mat");
+    if use_filters
+        data = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\ECG_HG_quality_dataset_MA.mat");
+    else
+        data = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\ECG_HG_quality_dataset_no_filters.mat");
+    end
 end
-fs = data.data_struct.fs_ecg;
+try
+    fs = data.data_struct.fs_ecg;
+catch
+    fprintf('Fs not found in data_struct \n')
+    fs = 200;
+end
 p_search_window = (p_search_window_ms/1000)*fs;
 t_search_window = (t_search_window_ms/1000)*fs;
 
@@ -65,7 +80,11 @@ for f = 1:length(struct_fields)
         c = 1; %count how many heartbeats we save
         for s = 1:size(agcl_ecg,2)
             agcl_ecg_segment = agcl_ecg(:,s);
-            agcl_qrs_segment = agcl_annot{1,s};
+            try
+                agcl_qrs_segment = agcl_annot{1,s};
+            catch
+                agcl_qrs_segment = agcl_annot(1,s);
+            end
             p_onsets = [];
             t_offsets = [];
             for r = 1:length(agcl_qrs_segment)
@@ -150,7 +169,11 @@ for f = 1:length(struct_fields)
         c = 1; %count how many heartbeats we save
         for s = 1:size(hg_ecg,2)
             hg_ecg_segment = hg_ecg(:,s);
-            hg_qrs_segment = hg_annot{1,s};
+            try
+                hg_qrs_segment = hg_annot{1,s};
+            catch
+                hg_qrs_segment = hg_annot(1,s);
+            end
             %rri_hg = diff(hg_qrs_segment);
             p_onsets = [];
             t_offsets = [];
@@ -391,10 +414,18 @@ end
 %save('C:\Users\giann\OneDrive\Desktop\ECG HG paper\similarity_analysis_results.mat','CorrMat','NrmseMat','CosMat','JsdMat','EmdMat','SigQual','-v7.3');
 
 %% Save profiles for further analysis in MATLAB
-if use_filters
-    save('C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\heartbeat_profiles_MA.mat','profiling_struct')
-else
-    save('C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\heartbeat_profiles_no_filters.mat','profiling_struct')
+if manually_cleaned
+    if use_filters
+        save('C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\manually_cleaned_heartbeat_profiles_MA.mat','profiling_struct')
+    else
+        save('C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\manually_cleaned_heartbeat_profiles_no_filters.mat','profiling_struct')
+    end
+else 
+    if use_filters
+        save('C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\heartbeat_profiles_MA.mat','profiling_struct')
+    else
+        save('C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\heartbeat_profiles_no_filters.mat','profiling_struct')
+    end
 end
 %% Save results for processing in R
 if calcMetrics
