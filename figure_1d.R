@@ -16,6 +16,12 @@ fs <- 200
 selected_participants <- c("p1","p5","p10","p39")
 selected_channels <- c("ch1", "ch2","ch3")
 
+# Create output directory if it doesn't exist
+output_dir <- paste0("R_figures/figure_1d/")
+if (!dir.exists(output_dir)) {
+  dir.create(output_dir, recursive = TRUE)
+}
+
 waveform_data <- data.frame()
 features_data <- data.frame()
 
@@ -527,12 +533,12 @@ if (length(plot_list) > 0) {
   print(combined_plot)
   
   # Save the combined plot
-  ggsave("R_figures/figure_1d/ecg_kmeans_with_features.png", combined_plot, 
+  ggsave(paste0(output_dir,"ecg_kmeans_with_features.png"), combined_plot, 
          width = 15, height = 10 * length(selected_participants) / 2, dpi = 300, bg = "white")
 }
 
 # Also create high-quality individual plots
 for (plot_name in names(plot_list)) {
-  ggsave(paste0("R_figures/figure_1d/", plot_name, "_features.png"), 
+  ggsave(paste0(output_dir, plot_name, "_features.png"), 
          plot_list[[plot_name]], width = 8, height = 6, dpi = 300, bg = "white")
 }

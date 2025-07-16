@@ -58,9 +58,15 @@ def convert_nested_matlab_to_json(mat_file_path, json_file_path=None):
                 return float(obj)
             elif isinstance(obj, (np.bool_)):
                 return bool(obj)
-            elif isinstance(obj, np.complex):
+            elif isinstance(obj, complex):
                 return str(obj)
-            
+            elif isinstance(obj, bytes):
+                print(f"Encountered bytes object: {obj}")
+                try:
+                    return obj.decode('utf-8')  # Attempt to decode as UTF-8
+                except UnicodeDecodeError:
+                    return obj.hex()  # Fallback: represent as a hex string
+
             # Let the base class default method handle the rest
             return json.JSONEncoder.default(self, obj)
     
@@ -76,7 +82,7 @@ def convert_nested_matlab_to_json(mat_file_path, json_file_path=None):
 
 if __name__ == "__main__":
    
-    input_file = "/home/giannis/Documents/ECG HG paper/results_data/manually_cleaned_participant_id_results.mat"
-    output_file = "/home/giannis/Documents/ECG HG paper/results_data/manually_cleaned_participant_id_results.json"
+    input_file = "/home/giannis/Documents/ECG HG paper/results_data/metrics_deviation_from_noise.mat"
+    output_file = "/home/giannis/Documents/ECG HG paper/results_data/metrics_deviation_from_noise.json"
     
     convert_nested_matlab_to_json(input_file, output_file)
