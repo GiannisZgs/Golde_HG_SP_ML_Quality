@@ -284,6 +284,14 @@ if (!dir.exists(individual_dir)) {
   dir.create(individual_dir, recursive = TRUE)
 }
 
+custom_y_breaks <- function(limits) {
+  breaks <- pretty(limits)  # Generate default breaks
+  if (1 >= limits[1] && 1 <= limits[2]) {
+    breaks <- sort(unique(c(breaks, 1)))  # Ensure 1 is included
+  }
+  return(breaks)
+}
+
 # Save individual boxplots for each metric
 for (metric in metrics) {
   # Create individual boxplot for this metric
@@ -294,6 +302,7 @@ for (metric in metrics) {
     geom_boxplot(alpha = 0.7, outlier.shape = NA) +
     geom_jitter(width = 0.2, height = 0, alpha = 0.6, size = 2) +
     scale_fill_manual(values = sensor_colors) +
+    scale_y_continuous(breaks = function(limits) custom_y_breaks(limits)) +  # Custom y-axis breaks
     labs(
       title = paste(metric_labels[metric]),
       x = "",
@@ -302,13 +311,13 @@ for (metric in metrics) {
     ) +
     theme_minimal() +
     theme(
-      axis.text.x = element_text(angle = 45, hjust = 1, size = 20),
-      axis.text.y = element_text(size = 20),
-      axis.title = element_text(size = 20),
+      axis.text.x = element_text(angle = 45, hjust = 1, size = 18),
+      axis.text.y = element_text(size = 18),
+      axis.title = element_text(size = 18),
       legend.position = "none",
       legend.title = element_text(size = 12),
       plot.title = element_text(size = 20),
-      strip.text = element_text(size = 20),
+      strip.text = element_text(size = 18),
       panel.grid.minor = element_blank(),
       panel.background = element_rect(fill = "white", color = NA),
       plot.background = element_rect(fill = "white", color = NA)
@@ -324,6 +333,7 @@ for (metric in metrics) {
     geom_violin(alpha = 0.7, scale = "width", trim = TRUE) +
     geom_jitter(width = 0.1, height = 0, alpha = 0.6, size = 1.5) +
     scale_fill_manual(values = sensor_colors) +
+    scale_y_continuous(breaks = function(limits) custom_y_breaks(limits)) +  # Custom y-axis breaks
     labs(
       title = paste(metric_labels[metric]),
       x = "",
@@ -332,13 +342,13 @@ for (metric in metrics) {
     ) +
     theme_minimal() +
     theme(
-      axis.text.x = element_text(angle = 45, hjust = 1, size = 20),
-      axis.text.y = element_text(size = 20),
-      axis.title = element_text(size = 20),
+      axis.text.x = element_text(angle = 45, hjust = 1, size = 18),
+      axis.text.y = element_text(size = 18),
+      axis.title = element_text(size = 18),
       legend.position = "none",
       legend.title = element_text(size = 12),
       plot.title = element_text(size = 20),
-      strip.text = element_text(size = 20),
+      strip.text = element_text(size = 18),
       panel.grid.minor = element_blank(),
       panel.background = element_rect(fill = "white", color = NA),
       plot.background = element_rect(fill = "white", color = NA)
@@ -353,6 +363,7 @@ for (metric in metrics) {
   p_beeswarm <- ggplot(metric_data, aes(x = Channel, y = Value, color = SensorLabel)) +
     geom_beeswarm(size = 2.5, alpha = 0.7, cex = 2) +
     scale_color_manual(values = sensor_colors) +
+    scale_y_continuous(breaks = function(limits) custom_y_breaks(limits)) +  # Custom y-axis breaks
     labs(
       title = paste(metric_labels[metric]),
       x = "",
@@ -361,13 +372,13 @@ for (metric in metrics) {
     ) +
     theme_minimal() +
     theme(
-      axis.text.x = element_text(angle = 45, hjust = 1, size = 20),
-      axis.text.y = element_text(size = 20),
-      axis.title = element_text(size = 20),
+      axis.text.x = element_text(angle = 45, hjust = 1, size = 18),
+      axis.text.y = element_text(size = 18),
+      axis.title = element_text(size = 18),
       legend.position = "none",
       legend.title = element_text(size = 12),
       plot.title = element_text(size = 20),
-      strip.text = element_text(size = 20),
+      strip.text = element_text(size = 18),
       panel.grid.minor = element_blank(),
       panel.background = element_rect(fill = "white", color = NA),
       plot.background = element_rect(fill = "white", color = NA)
