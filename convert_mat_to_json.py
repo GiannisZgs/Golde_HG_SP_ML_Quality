@@ -82,7 +82,7 @@ def convert_nested_matlab_to_json(mat_file_path, json_file_path=None):
 
 if __name__ == "__main__":
    
-    input_file = "/home/giannis/Documents/ECG HG paper/results_data/metrics_deviation_from_noise.mat"
-    output_file = "/home/giannis/Documents/ECG HG paper/results_data/metrics_deviation_from_noise.json"
+    input_file = "/home/giannis/Documents/ECG HG paper/results_data/participant_id_results.mat"
+    output_file = "/home/giannis/Documents/ECG HG paper/results_data/participant_id_results.json"
     
     convert_nested_matlab_to_json(input_file, output_file)
