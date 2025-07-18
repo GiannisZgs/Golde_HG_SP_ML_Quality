@@ -10,8 +10,8 @@ calcMetrics = 0; %boolean to control metric calculation
 
 up_percentile = 95;
 bottom_percentile = 1;
-use_filters = 0;
-manually_cleaned = 1;
+use_filters = 1;
+manually_cleaned = 0;
 if manually_cleaned
     if use_filters
         data = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\ECG_HG_manually_cleaned_quality_dataset_MA.mat");
@@ -227,24 +227,24 @@ for f = 1:length(struct_fields)
         
     end
     
-%     if ~any(isnan(hg_segmented_beats.ch1))
-%         figure;
-%         plot(hg_segmented_beats.ch1)
-%         title('HG Channel 1 Heartbeat Profile')
-%     end
-%     
-%     if ~any(isnan(hg_segmented_beats.ch2))
-%         figure;
-%         plot(hg_segmented_beats.ch2)
-%         title('HG Channel 2 Heartbeat Profile')
-%     end
-%     
-%     
-%     if ~any(isnan(hg_segmented_beats.ch2))
-%         figure;
-%         plot(hg_segmented_beats.ch3)
-%         title('HG Channel 3 Heartbeat Profile')
-%     end
+    if ~any(isnan(hg_segmented_beats.ch1))
+        figure;
+        plot(hg_segmented_beats.ch1)
+        title('HG Channel 1 Heartbeat Profile')
+    end
+    
+    if ~any(isnan(hg_segmented_beats.ch2))
+        figure;
+        plot(hg_segmented_beats.ch2)
+        title('HG Channel 2 Heartbeat Profile')
+    end
+    
+    
+    if ~any(isnan(hg_segmented_beats.ch3))
+        figure;
+        plot(hg_segmented_beats.ch3)
+        title('HG Channel 3 Heartbeat Profile')
+    end
     
     %plot(agcl_ecg_segment)
     %hold on
