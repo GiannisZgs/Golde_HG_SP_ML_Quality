@@ -2,9 +2,9 @@ clear;
 close all;
 %% Implement a clustering analysis to extract average heartbeat profiles
 %% This should be done across patients, across sensors, across channels
-use_filters = 0;
+use_filters = 1;
 plot_profiles = true;
-manually_cleaned = 1;
+manually_cleaned = 0;
 if manually_cleaned
     if use_filters
         data = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\manually_cleaned_heartbeat_profiles_MA.mat");
