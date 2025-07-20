@@ -644,9 +644,9 @@ create_circular_barplot <- function(sensor_data, sensor_name, palette = NULL, sh
       x = 0,  # Right side of the circle
       y = tick_levels[i],
       label = tick_labels[i],
-      size = 4,
-      color = "gray40",
-      hjust = -0.5  # Position text to the right of the point
+      size = 5,
+      color = "gray30",
+      hjust = -0.2  # Position text to the right of the point
     )
   }
 
