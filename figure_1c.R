@@ -8,8 +8,8 @@ library(scales)
 library(grid)
 library(cowplot)
 
-use <- "hg"  
-lead_to_plot <- 2
+use <- "agcl"  
+lead_to_plot <- 3
 
 if (use == "hg") {
     data_sensor <- readMat("hg_p5.mat")
@@ -70,11 +70,11 @@ main_plot <- ggplot(ecg_data, aes(x = Time, y = Amplitude, color = Sensor)) +
   ) +
   theme_minimal_grid(font_size = 10) + 
   theme(
-    axis.title = element_text(size = 25),
-    axis.text = element_text(size = 25),
+    axis.title = element_text(size = 30),
+    axis.text = element_text(size = 30),
     legend.position = "bottom",
     legend.title = element_text(size = 10),
-    legend.text = element_text(size = 25),
+    legend.text = element_text(size = 30),
     legend.key.width = unit(2, "cm"),
     panel.grid.major = element_line(color = "gray90"),
     panel.grid.minor = element_line(color = "gray95"),

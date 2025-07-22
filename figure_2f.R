@@ -557,7 +557,7 @@ create_circular_barplot <- function(sensor_data, sensor_name, palette = NULL, sh
     "p_wave_amp" = "P-Wave Amplitude",
     "peak_to_peak" = "Peak-to-Peak",
     "t_wave_amp" = "T-Wave Amplitude",
-    "NRMSE" = "Signal Quality (1-NRMSE)",
+    "NRMSE" = "Similarity (1-NRMSE)",
     "Cross-Correlation" = "Cross-Correlation",
     "participant_acc" = "Participant ID Accuracy",
     "participant_micro_f1" = "Participant ID Micro-F1",
@@ -611,11 +611,11 @@ create_circular_barplot <- function(sensor_data, sensor_name, palette = NULL, sh
       panel.grid.major.x = element_blank(),
       panel.grid.minor = element_blank(),
       panel.grid.major.y = element_line(color = "gray80", size = 0.5),
-      plot.title = element_text(size = 20, face = "bold", hjust = 0.5),
+      plot.title = element_text(size = 30, face = "bold", hjust = 0.5),
       plot.caption = element_text(size = 10, hjust = 0.5),
       legend.position = ifelse(show_legend, "bottom", "none"),
-      legend.title = element_text(size = 18),
-      legend.text = element_text(size = 18),
+      legend.title = element_blank(),
+      legend.text = element_text(size = 19),
       panel.border = element_blank(),
       axis.line = element_blank()
     )
@@ -719,30 +719,30 @@ pphg_circular <- create_circular_barplot(pphg_data, "PPHG", metric_palette, show
 
 
 agcl_with_labels <- ggdraw(agcl_circular) + 
-  draw_label("Lead 1", x = 0.8, y = 0.8, fontface = "bold", size = 18, 
+  draw_label("Lead 1", x = 0.8, y = 0.8, fontface = "bold", size = 25, 
              hjust = 0.5, vjust = 0.5, color = "black", 
              fontfamily = "sans") +
-  draw_label("Lead 2", x = 0.6, y = 0.12, fontface = "bold", size = 18, 
+  draw_label("Lead 2", x = 0.6, y = 0.12, fontface = "bold", size = 25, 
              hjust = 0.5, vjust = 0.5, color = "black", 
              fontfamily = "sans") +
-  draw_label("Lead 3", x = 0.1, y = 0.5, fontface = "bold", size = 18, 
+  draw_label("Lead 3", x = 0.1, y = 0.5, fontface = "bold", size = 25, 
              hjust = 0.5, vjust = 0.5, color = "black", 
              fontfamily = "sans") +
-  draw_label("Channel ID", x = 0.3, y = 0.9, fontface = "bold", size = 18, 
+  draw_label("Channel ID", x = 0.3, y = 0.9, fontface = "bold", size = 25, 
              hjust = 0.5, vjust = 0.5, color = "black", 
              fontfamily = "sans")
 
 pphg_with_labels <- ggdraw(pphg_circular) + 
-  draw_label("Lead 1", x = 0.8, y = 0.8, fontface = "bold", size = 18, 
+  draw_label("Lead 1", x = 0.8, y = 0.8, fontface = "bold", size = 25, 
              hjust = 0.5, vjust = 0.5, color = "black", 
              fontfamily = "sans") +
-  draw_label("Lead 2", x = 0.6, y = 0.12, fontface = "bold", size = 18, 
+  draw_label("Lead 2", x = 0.6, y = 0.12, fontface = "bold", size = 25, 
              hjust = 0.5, vjust = 0.5, color = "black", 
              fontfamily = "sans") +
-  draw_label("Lead 3", x = 0.1, y = 0.5, fontface = "bold", size = 18, 
+  draw_label("Lead 3", x = 0.1, y = 0.5, fontface = "bold", size = 25, 
              hjust = 0.5, vjust = 0.5, color = "black", 
              fontfamily = "sans") +
-  draw_label("Channel ID", x = 0.3, y = 0.9, fontface = "bold", size = 18, 
+  draw_label("Channel ID", x = 0.3, y = 0.9, fontface = "bold", size = 25, 
              hjust = 0.5, vjust = 0.5, color = "black", 
              fontfamily = "sans")
 
@@ -757,8 +757,8 @@ legend <- cowplot::get_legend(
     theme(legend.position = "bottom",
       legend.box.margin = margin(t = 25),    # Increased top margin
       legend.key.size = unit(1.5, "cm"),     # Increased key size
-      legend.title = element_text(size = 20), # Larger title
-      legend.text = element_text(size = 16)   # Larger text
+      legend.title = element_blank(), # Larger title
+      legend.text = element_text(size = 19)   # Larger text
     )
 )
 

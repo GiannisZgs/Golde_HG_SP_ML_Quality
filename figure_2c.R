@@ -387,9 +387,10 @@ create_sensor_cluster_visualization <- function(data, sensor) {
     theme_minimal() +
     theme(
       legend.position = "none",
-      plot.title = element_text(size = 18, face = "bold"),
+      plot.title = element_text(size = 30, face = "bold"),
       axis.title = element_text(size = 30),
-      axis.text = element_text(size = 30)
+      axis.text = element_blank(),
+      axis.ticks = element_blank()
     )
   
   # Get the bounds of the t-SNE plot
@@ -699,9 +700,9 @@ create_improved_visualization <- function(data, sensor) {
     theme_minimal() +
     theme(
       legend.position = "none",
-      plot.title = element_text(size = 20, face = "bold"),
-      axis.title = element_text(size =18),
-      axis.text = element_text(size = 18),
+      plot.title = element_text(size = 30, face = "bold"),
+      axis.title = element_text(size = 30),
+      axis.text = element_blank(),
       legend.title = element_text(size = 12),
       legend.text = element_text(size = 10)
     )
@@ -719,9 +720,9 @@ create_improved_visualization <- function(data, sensor) {
     theme_minimal() +
     theme(
       legend.position = "none",
-      plot.title = element_text(size = 20, face = "bold"),
-      axis.title = element_text(size = 18),
-      axis.text = element_text(size = 18),
+      plot.title = element_text(size = 30, face = "bold"),
+      axis.title = element_text(size = 30),
+      axis.text = element_blank(),
       legend.title = element_text(size = 12),
       legend.text = element_text(size = 10)
     )
@@ -827,10 +828,10 @@ create_improved_visualization <- function(data, sensor) {
   
   # Create the main panel with the two t-SNE plots stacked vertically
   main_panel <- plot_grid(
-    gt_plot, 
-    pred_plot, 
-    ncol = 1,
-    align = "v"
+    gt_plot + theme(aspect.ratio = 1.4), 
+    pred_plot + theme(aspect.ratio = 1.4), 
+    ncol = 2,
+    align = "h"
   )
   
   # Create small individual bubble panels for each class
@@ -854,7 +855,6 @@ create_improved_visualization <- function(data, sensor) {
     )
     
     # Combine the main panel and bubbles grid
-    # Make the bubbles column narrower to ensure it stays within bounds
     final_panel <- plot_grid(
       main_panel, bubbles_grid,
       ncol = 2,

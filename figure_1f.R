@@ -9,7 +9,7 @@ library(grid)
 library(cowplot)
 library(ggrepel)
 library(viridis)
-library(ggbeeswarm)  # For beeswarm plots
+library(ggbeeswarm)  
 
 "Plot for the whole dataset instead of cleaned to have more samples"
 
@@ -40,7 +40,7 @@ metrics <- c(
 metric_labels <- c(
   "High Frequency (15-40 Hz)",
   "Low Frequency (0.5-5 Hz)",
-  "Mid Frequency (8-30 Hz)",
+  "Mid Frequency (5-15 Hz)",
   "Powerline Noise (50 Hz)",
   "Powerline Noise Harmonic (80 Hz)",
   "Baseline Wander (0-0.3 Hz)",
@@ -311,13 +311,13 @@ for (metric in metrics) {
     ) +
     theme_minimal() +
     theme(
-      axis.text.x = element_text(angle = 45, hjust = 1, size = 18),
-      axis.text.y = element_text(size = 18),
-      axis.title = element_text(size = 18),
+      axis.text.x = element_text(angle = 45, hjust = 1, size = 25),
+      axis.text.y = element_text(size = 25),
+      axis.title = element_text(size = 25),
       legend.position = "none",
       legend.title = element_text(size = 12),
-      plot.title = element_text(size = 20),
-      strip.text = element_text(size = 18),
+      plot.title = element_text(size = 25),
+      strip.text = element_text(size = 25),
       panel.grid.minor = element_blank(),
       panel.background = element_rect(fill = "white", color = NA),
       plot.background = element_rect(fill = "white", color = NA)

@@ -9,8 +9,9 @@ library(grid)
 library(cowplot)
 library(ggrepel)
 
-nans_removed = TRUE
+nans_removed = TRUE #true if processing has already been done
 data_path <- "/home/giannis/Documents/ECG HG paper/results_data/heartbeat_profiles_MA.json"
+single_participant <- "p10"
 
 if (nans_removed) {
   data <- fromJSON(txt = data_path, simplifyVector = FALSE)
@@ -119,7 +120,6 @@ raw_dir <- paste0(output_dir, "raw/")
 if (!dir.exists(aggregated_dir)) dir.create(aggregated_dir, recursive = TRUE)
 if (!dir.exists(raw_dir)) dir.create(raw_dir, recursive = TRUE)
 
-# OPTION 1: Aggregated waveforms (one line per participant) for clearer visualization
 plot_list_agg <- list()
 
 # Generate overlay plots for each SensorChannel using aggregated data
@@ -131,15 +131,17 @@ for (sensor_channel in unique(waveform_data_agg$SensorChannel)) {
   p <- ggplot(subset_data, aes(x = Time, y = Amplitude, group = Participant)) +
     geom_line(alpha = 0.3, size = 0.5, color = ifelse(grepl("AgCl", sensor_channel), "#d9020d", "#0066CC")) +
     labs(
-      title = sensor_channel,
-      x = "Time (s)",
+      title = ifelse(grepl("AgCl", sensor_channel), gsub("^(AgCl|PPHG) ", "", sensor_channel), ""),
+      x = "",
       y = "Amplitude"
     ) +
     theme_minimal() +
     theme(
-      plot.title = element_text(size = 20),
-      axis.title = element_text(size = 18),
-      axis.text = element_text(size = 18),
+      plot.title = element_text(size = 30),
+      axis.title = element_text(size = 30),
+      axis.text.y = element_text(size = 30),
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank(),
       panel.grid.major = element_line(color = "gray90"),
       panel.grid.minor = element_line(color = "gray95")
     )
@@ -173,7 +175,7 @@ if (length(plot_list_agg) > 0) {
          width = 15, height = 10, dpi = 300, bg = "white")
 }
 
-# OPTION 2: Raw data with all points to show variability
+# Also make one for raw data with all points to show variability
 plot_list_raw <- list()
 
 # Generate overlay plots for each SensorChannel using raw data
@@ -185,15 +187,17 @@ for (sensor_channel in unique(waveform_data$SensorChannel)) {
   p <- ggplot(subset_data, aes(x = Time, y = Amplitude)) +
     geom_point(alpha = 0.1, size = 0.3, color = ifelse(grepl("AgCl", sensor_channel), "#d9020d", "#0066CC")) +
     labs(
-      title = paste0(sensor_channel),
-      x = "Time (s)",
+      title = ifelse(grepl("AgCl", sensor_channel), gsub("^(AgCl|PPHG) ", "", sensor_channel), ""),
+      x = "",
       y = "Amplitude"
     ) +
     theme_minimal() +
     theme(
-      plot.title = element_text(size = 20),
-      axis.title = element_text(size = 18),
-      axis.text = element_text(size = 18),
+      plot.title = element_text(size = 30),
+      axis.title = element_text(size = 30),
+      axis.text.y = element_text(size = 30),
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank(),
       panel.grid.major = element_line(color = "gray90"),
       panel.grid.minor = element_line(color = "gray95")
     )
@@ -235,9 +239,6 @@ single_participant_dir <- paste0(output_dir, "single_participant/")
 if (!dir.exists(single_participant_dir)) dir.create(single_participant_dir, recursive = TRUE)
 
 
-# You can change this to any specific participant ID you want
-single_participant <- "p39"
-
 # Create plots for a single participant
 plot_list_single <- list()
 
@@ -254,15 +255,17 @@ for (sensor_channel in unique(waveform_data$SensorChannel)) {
   p <- ggplot(subset_data, aes(x = Time, y = Amplitude)) +
     geom_point(alpha = 0.3, size = 0.5, color = ifelse(grepl("AgCl", sensor_channel), "#d9020d", "#0066CC")) +
     labs(
-      title = paste0(sensor_channel),
-      x = "Time (s)",
+      title = ifelse(grepl("AgCl", sensor_channel), gsub("^(AgCl|PPHG) ", "", sensor_channel), ""),
+      x = "",
       y = "Amplitude"
     ) +
     theme_minimal() +
     theme(
-      plot.title = element_text(size = 20),
-      axis.title = element_text(size = 18),
-      axis.text = element_text(size = 18),
+      plot.title = element_text(size = 30),
+      axis.title = element_text(size = 30),
+      axis.text.y = element_text(size = 30),
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank(),
       panel.grid.major = element_line(color = "gray90"),
       panel.grid.minor = element_line(color = "gray95")
     )
@@ -323,15 +326,17 @@ if (generate_all_participant_plots) {
       p <- ggplot(subset_data, aes(x = Time, y = Amplitude)) +
         geom_point(alpha = 0.3, size = 0.5, color = ifelse(grepl("AgCl", sensor_channel), "#d9020d", "#0066CC")) +
         labs(
-          title = paste0(sensor_channel),
-          x = "Time (s)",
+          title = ifelse(grepl("AgCl", sensor_channel), gsub("^(AgCl|PPHG) ", "", sensor_channel), ""),
+          x = "",
           y = "Amplitude"
         ) +
         theme_minimal() +
         theme(
-          plot.title = element_text(size = 16),
-          axis.title = element_text(size = 14),
-          axis.text = element_text(size = 12)
+          plot.title = element_text(size = 25),
+          axis.title = element_text(size = 25),
+          axis.text.y = element_text(size = 25),
+          axis.text.x = element_blank(),
+          axis.ticks.x = element_blank()
         )
       
       participant_plot_list[[sensor_channel]] <- p

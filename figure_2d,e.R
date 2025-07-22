@@ -274,11 +274,11 @@ create_plot <- function(data, plot_type, x_var = "Channel", color_var = "Sensor"
     theme_minimal() +
     theme(
       legend.position = "none",
-      axis.text.x = element_text(angle = 45, hjust = 1, size = 20),
-      axis.text.y = element_text(size = 20),
-      axis.title = element_text(size = 20),
-      strip.text = element_text(size = 20),
-      plot.title = element_text(size = 20),
+      axis.text.x = element_text(angle = 45, hjust = 1, size = 25),
+      axis.text.y = element_text(size = 25),
+      axis.title = element_text(size = 25),
+      strip.text = element_text(size = 25),
+      plot.title = element_text(size = 25),
       panel.grid.minor = element_blank(),
       panel.background = element_rect(fill = "white", color = NA),
       plot.background = element_rect(fill = "white", color = NA)
@@ -404,13 +404,13 @@ if (nrow(features_data) > 0) {
     ) +
     theme_minimal() +
     theme(
-      axis.text.x = element_text(angle = 45, hjust = 1, size = 20),
-      axis.text.y = element_text(size = 20),
-      axis.title = element_text(size = 20),
-      plot.title = element_text(size = 20),
+      axis.text.x = element_text(angle = 45, hjust = 1, size = 25),
+      axis.text.y = element_text(size = 25),
+      axis.title = element_text(size = 25),
+      plot.title = element_text(size = 25),
       panel.grid.minor = element_blank(),
       legend.position = "none",
-      strip.text = element_text(size = 20)
+      strip.text = element_text(size = 25)
     ) +
     facet_grid(MetricDisplay ~ SensorLabel, scales = "free_y")
   
@@ -442,13 +442,13 @@ combined_boxplot_with_points <- ggplot(features_data, aes(x = ChannelLabel, y = 
   ) +
   theme_minimal() +
   theme(
-    axis.text.x = element_text(angle = 45, hjust = 1, size = 20),
-    axis.text.y = element_text(size = 20),
-    axis.title = element_text(size = 20),
-    plot.title = element_text(size = 20),
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 25),
+    axis.text.y = element_text(size = 25),
+    axis.title = element_text(size = 25),
+    plot.title = element_text(size = 25),
     panel.grid.minor = element_blank(),
     legend.position = "none",
-    strip.text = element_text(size = 20)
+    strip.text = element_text(size = 25)
   ) +
   facet_grid(MetricDisplay ~ SensorLabel, scales = "free_y")
 
@@ -467,13 +467,13 @@ combined_violin <- ggplot(features_data, aes(x = ChannelLabel, y = Value, fill =
   ) +
   theme_minimal() +
   theme(
-    axis.text.x = element_text(angle = 45, hjust = 1, size = 20),
-    axis.text.y = element_text(size = 20),
-    axis.title = element_text(size = 20),
-    plot.title = element_text(size = 20),
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 25),
+    axis.text.y = element_text(size = 25),
+    axis.title = element_text(size = 25),
+    plot.title = element_text(size = 25),
     panel.grid.minor = element_blank(),
     legend.position = "none",
-    strip.text = element_text(size = 20)
+    strip.text = element_text(size = 25)
   ) +
   facet_grid(MetricDisplay ~ SensorLabel, scales = "free_y")
 
@@ -489,13 +489,13 @@ combined_beeswarm <- ggplot(features_data, aes(x = ChannelLabel, y = Value, colo
   ) +
   theme_minimal() +
   theme(
-    axis.text.x = element_text(angle = 45, hjust = 1, size = 20),
-    axis.text.y = element_text(size = 20),
-    axis.title = element_text(size = 20),
-    plot.title = element_text(size = 20),
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 25),
+    axis.text.y = element_text(size = 25),
+    axis.title = element_text(size = 25),
+    plot.title = element_text(size = 25),
     panel.grid.minor = element_blank(),
     legend.position = "none",
-    strip.text = element_text(size = 20)
+    strip.text = element_text(size = 25)
   ) +
   facet_grid(MetricDisplay ~ SensorLabel, scales = "free_y")
 

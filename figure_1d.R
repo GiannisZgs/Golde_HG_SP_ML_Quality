@@ -205,11 +205,11 @@ for (participant in selected_participants) {
         theme_minimal() +
         theme(
           plot.title = element_text(size = 14, face = "bold"),
-          axis.title = element_text(size = 20),
-          axis.text = element_text(size = 20),
+          axis.title = element_text(size = 25),
+          axis.text = element_text(size = 25),
           legend.position = "bottom",
           legend.title = element_text(size = 10),
-          legend.text = element_text(size = 20),
+          legend.text = element_text(size = 25),
           panel.grid.major = element_line(color = "gray90"),
           panel.grid.minor = element_line(color = "gray95")
         )

@@ -11,12 +11,12 @@ library(ggrepel)
 library(viridis)
 
 fs <- 200
-participant <- "p39" #c("p1","p5","p10","p39")
+participant <- "p5" #c("p1","p5","p10","p39")
 sensor1 <- "AgCl"
 sensor2 <- "HG1"
 same_sensor <- "HG2" #used if plot_type is "intra_sensor"
 plot_type <- "inter_sensor"
-channel <- "channel_1"
+channel <- "channel_3"
 bands_to_use <- "all"  # Can be "all" or a subset like c("low", "high")
 
 # Load the PSD data
@@ -207,11 +207,11 @@ create_main_plot <- function(psd_data) {
     theme(
       plot.title = element_text(size = 16, face = "bold"),
       plot.subtitle = element_text(size = 14),
-      axis.title = element_text(size = 15),
-      axis.text = element_text(size = 20),
+      axis.title = element_text(size = 25),
+      axis.text = element_text(size = 25),
       legend.position = "bottom",
-      legend.title = element_text(size = 20),
-      legend.text = element_text(size = 20),
+      legend.title = element_text(size = 25),
+      legend.text = element_text(size = 25),
       panel.grid.major = element_line(color = "gray90"),
       panel.grid.minor = element_line(color = "gray95"),
       panel.background = element_rect(fill = "white", color = NA),
@@ -258,11 +258,11 @@ create_band_plot <- function(psd_data, band_name) {
     theme_minimal() +
     theme(
       plot.title = element_text(size = 12, face = "bold", color = band_color),
-      axis.title = element_text(size = 12),
-      axis.text = element_text(size = 15),
+      axis.title = element_text(size = 25),
+      axis.text = element_text(size = 25),
       legend.position = "bottom",
-      legend.title = element_text(size = 15),
-      legend.text = element_text(size = 15),
+      legend.title = element_text(size = 25),
+      legend.text = element_text(size = 25),
       legend.key.size = unit(1, "cm"),
       panel.grid.major = element_line(color = "gray90"),
       panel.grid.minor = element_line(color = "gray95"),

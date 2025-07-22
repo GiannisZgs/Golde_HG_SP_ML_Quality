@@ -24,7 +24,7 @@ selected_participants_profiles <- c("p1","p5", "p10", "p22", "p39") # Pick 5 par
 channels <- c("ch1", "ch2", "ch3")
 
 # Selected sensor-channel for profile visualization
-profile_sensor <- "AgCl"  # Will be displayed as PPHG
+profile_sensor <- "HG"  # Will be displayed as PPHG
 profile_channel <- "ch3"  # Lead 3
 
 # Update the bubble panel function to create MUCH larger bubbles with clearer waveforms
@@ -82,10 +82,13 @@ create_tsne_plots <- function(data, sensor, channel, save_individual = TRUE) {
     ) +
     theme_minimal() +
     theme(
-      legend.position = "bottom",
-      plot.title = element_text(size = 14, face = "bold"),
-      axis.title = element_text(size = 12),
-      axis.text = element_text(size = 10),
+      legend.position = "none",
+      plot.title = element_text(size = 25, face = "bold"),
+      axis.title = element_text(size = 25),
+      axis.text.y = element_blank(),
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank(),
+      axis.ticks.y = element_blank(),
       legend.title = element_text(size = 12),
       legend.text = element_text(size = 10)
     )
@@ -102,10 +105,13 @@ create_tsne_plots <- function(data, sensor, channel, save_individual = TRUE) {
     ) +
     theme_minimal() +
     theme(
-      legend.position = "bottom",
-      plot.title = element_text(size = 14, face = "bold"),
-      axis.title = element_text(size = 12),
-      axis.text = element_text(size = 10),
+      legend.position = "none",
+      plot.title = element_text(size = 25, face = "bold"),
+      axis.title = element_text(size = 25),
+      axis.text.y = element_blank(),
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank(),
+      axis.ticks.y = element_blank(),
       legend.title = element_text(size = 12),
       legend.text = element_text(size = 10)
     )
@@ -242,7 +248,7 @@ create_profile_cluster_visualization <- function(data, sensor, channel, particip
       legend.position = "none",
       plot.title = element_text(size = 40, face = "bold"),
       axis.title = element_text(size = 40),
-      axis.text = element_text(size = 40),
+      axis.text = element_blank(),
       legend.text = element_text(size = 9),
       legend.key.size = unit(0.8, "lines"),  # Smaller legend keys
       legend.spacing.y = unit(0.5, "lines")  # Less space between legend items

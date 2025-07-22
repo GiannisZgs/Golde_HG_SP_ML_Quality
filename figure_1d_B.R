@@ -15,7 +15,7 @@ library(ggrepel)
 data <- fromJSON(txt = "/home/giannis/Documents/ECG HG paper/results_data/manually_cleaned_channel_id_results.json", simplifyVector = FALSE)
 
 # Create output directory if it doesn't exist
-output_dir <- paste0("R_figures/figure_1d_B/")
+output_dir <- paste0("R_figures/figure_1d_B/without_labels/")
 if (!dir.exists(output_dir)) {
   dir.create(output_dir, recursive = TRUE)
 }
@@ -193,11 +193,11 @@ for (channel in selected_channels) {
       theme_minimal() +
       theme(
         plot.title = element_text(size = 14, face = "bold"),
-        axis.title = element_text(size = 20),
-        axis.text = element_text(size = 20),
+        axis.title = element_text(size = 25),
+        axis.text = element_text(size = 25),
         legend.position = "bottom",
         legend.title = element_text(size = 10),
-        legend.text = element_text(size = 20),
+        legend.text = element_text(size = 25),
         panel.grid.major = element_line(color = "gray90"),
         panel.grid.minor = element_line(color = "gray95"),
         panel.background = element_rect(fill = "white", color = NA),
