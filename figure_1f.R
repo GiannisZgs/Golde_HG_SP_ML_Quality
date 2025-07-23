@@ -199,7 +199,7 @@ create_metric_plot <- function(data, metric_name, plot_type = "boxplot") {
       axis.text.x = element_text(angle = 45, hjust = 1, size = 31),
       axis.text.y = element_text(size = 31),
       axis.title = element_text(size = 31),
-      plot.title = element_text(size = 31, face = "bold"),
+      plot.title = element_text(size = 27, face = "bold"),
       legend.position = "none",
       panel.grid.minor = element_blank(),
       panel.background = element_rect(fill = "white", color = NA),
@@ -316,13 +316,13 @@ for (metric in metrics) {
     ) +
     theme_minimal() +
     theme(
-      axis.text.x = element_text(angle = 45, hjust = 1, size = 31),
-      axis.text.y = element_text(size = 31),
-      axis.title = element_text(size = 31),
+      axis.text.x = element_text(angle = 45, hjust = 1, size = 30),
+      axis.text.y = element_text(size = 30),
+      axis.title = element_text(size = 30),
       legend.position = "none",
       legend.title = element_text(size = 12),
-      plot.title = element_text(size = 31),
-      strip.text = element_text(size = 31),
+      plot.title = element_text(size = 27),
+      strip.text = element_text(size = 30),
       panel.grid.minor = element_blank(),
       panel.background = element_rect(fill = "white", color = NA),
       plot.background = element_rect(fill = "white", color = NA)
@@ -352,7 +352,7 @@ for (metric in metrics) {
       axis.title = element_text(size = 31),
       legend.position = "none",
       legend.title = element_text(size = 12),
-      plot.title = element_text(size = 31),
+      plot.title = element_text(size = 27),
       strip.text = element_text(size = 31),
       panel.grid.minor = element_blank(),
       panel.background = element_rect(fill = "white", color = NA),
@@ -377,13 +377,13 @@ for (metric in metrics) {
     ) +
     theme_minimal() +
     theme(
-      axis.text.x = element_text(angle = 45, hjust = 1, size = 31),
-      axis.text.y = element_text(size = 31),
-      axis.title = element_text(size = 31),
+      axis.text.x = element_text(angle = 45, hjust = 1, size = 30),
+      axis.text.y = element_text(size = 30),
+      axis.title = element_text(size = 30),
       legend.position = "none",
       legend.title = element_text(size = 12),
-      plot.title = element_text(size = 31),
-      strip.text = element_text(size = 31),
+      plot.title = element_text(size = 27),
+      strip.text = element_text(size = 30),
       panel.grid.minor = element_blank(),
       panel.background = element_rect(fill = "white", color = NA),
       plot.background = element_rect(fill = "white", color = NA)
