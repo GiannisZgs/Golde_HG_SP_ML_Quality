@@ -9,7 +9,7 @@ library(grid)
 library(cowplot)
 
 use <- "agcl"  
-lead_to_plot <- 3
+lead_to_plot <- 1
 
 if (use == "hg") {
     data_sensor <- readMat("hg_p5.mat")
@@ -18,7 +18,7 @@ if (use == "hg") {
 }
 
 artifacts <- list(
-  list(start = 10, end = 14, label = "Motion Artifact 1", position = "left"),
+  list(start = 4, end = 8, label = "Motion Artifact 1", position = "left"),
   list(start = 17, end = 21, label = "Motion Artifact 2", position = "right")
 )
 
