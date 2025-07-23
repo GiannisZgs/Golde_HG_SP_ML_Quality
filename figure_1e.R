@@ -11,12 +11,12 @@ library(ggrepel)
 library(viridis)
 
 fs <- 200
-participant <- "p5" #c("p1","p5","p10","p39")
+participant <- "p10" #c("p1","p5","p10","p39")
 sensor1 <- "AgCl"
 sensor2 <- "HG1"
-same_sensor <- "HG2" #used if plot_type is "intra_sensor"
-plot_type <- "inter_sensor"
-channel <- "channel_3"
+same_sensor <- "HG1" #used if plot_type is "intra_sensor"
+plot_type <- "intra_sensor"
+channel <- "channel_1"
 bands_to_use <- "all"  # Can be "all" or a subset like c("low", "high")
 
 # Load the PSD data
@@ -28,7 +28,7 @@ if (plot_type == "inter_sensor") {
 data <- fromJSON(txt = data_path, simplifyVector = FALSE)
 
 # Create output directory if it doesn't exist
-output_dir <- paste0("R_figures/figure_1e/",participant, "/", channel, "/", plot_type)
+output_dir <- paste0("R_figures/figure_1e_no_axes/",participant, "/", channel, "/", plot_type)
 if (!dir.exists(output_dir)) {
   dir.create(output_dir, recursive = TRUE)
 }
@@ -207,11 +207,11 @@ create_main_plot <- function(psd_data) {
     theme(
       plot.title = element_text(size = 16, face = "bold"),
       plot.subtitle = element_text(size = 14),
-      axis.title = element_text(size = 25),
-      axis.text = element_text(size = 25),
+      axis.title = element_text(size = 18),
+      axis.text = element_text(size = 18),
       legend.position = "bottom",
-      legend.title = element_text(size = 25),
-      legend.text = element_text(size = 25),
+      legend.title = element_text(size = 18),
+      legend.text = element_text(size = 18),
       panel.grid.major = element_line(color = "gray90"),
       panel.grid.minor = element_line(color = "gray95"),
       panel.background = element_rect(fill = "white", color = NA),
@@ -249,8 +249,8 @@ create_band_plot <- function(psd_data, band_name) {
     geom_line(size = 1, linetype = "solid") +
     labs(
       title = "",
-      x = "Frequency (Hz)",
-      y = "PSD (10*log10(μV²/Hz))",
+      x = "",
+      y = "",
       color = ""
     ) +
     # Simple x-axis limits without custom breaks
@@ -258,11 +258,11 @@ create_band_plot <- function(psd_data, band_name) {
     theme_minimal() +
     theme(
       plot.title = element_text(size = 12, face = "bold", color = band_color),
-      axis.title = element_text(size = 25),
-      axis.text = element_text(size = 25),
-      legend.position = "bottom",
-      legend.title = element_text(size = 25),
-      legend.text = element_text(size = 25),
+      axis.title = element_text(size = 18),
+      axis.text = element_text(size = 16),
+      legend.position = "none",
+      legend.title = element_text(size = 18),
+      legend.text = element_text(size = 18),
       legend.key.size = unit(1, "cm"),
       panel.grid.major = element_line(color = "gray90"),
       panel.grid.minor = element_line(color = "gray95"),
@@ -303,13 +303,13 @@ if (plot_type == "inter_sensor") {
         title = "",
         subtitle = "",
         theme = theme(
-          plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+          plot.title = element_text(size = 25, face = "bold", hjust = 0.5),
           plot.subtitle = element_text(size = 14, hjust = 0.5),
           plot.background = element_rect(fill = "white", color = NA)
         )
       ) &
       theme(
-        legend.position = "bottom",
+        legend.position = "none",
         panel.background = element_rect(fill = "white", color = NA),
         plot.background = element_rect(fill = "white", color = NA)
       )
@@ -352,7 +352,7 @@ if (plot_type == "inter_sensor") {
         )
       ) &
       theme(
-        legend.position = "bottom",
+        legend.position = "none",
         panel.background = element_rect(fill = "white", color = NA),
         plot.background = element_rect(fill = "white", color = NA)
       )
