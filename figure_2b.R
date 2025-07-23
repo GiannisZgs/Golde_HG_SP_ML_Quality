@@ -24,7 +24,7 @@ selected_participants_profiles <- c("p1","p5", "p10", "p22", "p39") # Pick 5 par
 channels <- c("ch1", "ch2", "ch3")
 
 # Selected sensor-channel for profile visualization
-profile_sensor <- "AgCl"  # Will be displayed as PPHG
+profile_sensor <- "HG"  # Will be displayed as PPHG
 profile_channel <- "ch3"  # Lead 3
 
 # Update the bubble panel function to create MUCH larger bubbles with clearer waveforms
