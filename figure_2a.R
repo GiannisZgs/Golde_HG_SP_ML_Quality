@@ -11,7 +11,7 @@ library(ggrepel)
 
 nans_removed = TRUE #true if processing has already been done
 data_path <- "/home/giannis/Documents/ECG HG paper/results_data/heartbeat_profiles_MA.json"
-single_participant <- "p5"
+single_participant <- "p39"
 
 if (nans_removed) {
   data <- fromJSON(txt = data_path, simplifyVector = FALSE)
@@ -131,7 +131,7 @@ for (sensor_channel in unique(waveform_data_agg$SensorChannel)) {
   p <- ggplot(subset_data, aes(x = Time, y = Amplitude, group = Participant)) +
     geom_line(alpha = 0.3, size = 0.5, color = ifelse(grepl("AgCl", sensor_channel), "#d9020d", "#0066CC")) +
     labs(
-      title = ifelse(grepl("AgCl", sensor_channel), gsub("^(AgCl|PPHG) ", "", sensor_channel), ""),
+      title = ifelse(grepl("^(AgCl|PPHG)", sensor_channel), gsub("^(AgCl|PPHG) ", "", sensor_channel), ""),
       x = "",
       y = "Amplitude (\u00B5V)"
     ) +
@@ -187,7 +187,7 @@ for (sensor_channel in unique(waveform_data$SensorChannel)) {
   p <- ggplot(subset_data, aes(x = Time, y = Amplitude)) +
     geom_point(alpha = 0.1, size = 0.3, color = ifelse(grepl("AgCl", sensor_channel), "#d9020d", "#0066CC")) +
     labs(
-      title = ifelse(grepl("AgCl", sensor_channel), gsub("^(AgCl|PPHG) ", "", sensor_channel), ""),
+      title = ifelse(grepl("^(AgCl|PPHG)", sensor_channel), gsub("^(AgCl|PPHG) ", "", sensor_channel), ""),
       x = "",
       y = "Amplitude (\u00B5V)"
     ) +
@@ -255,7 +255,7 @@ for (sensor_channel in unique(waveform_data$SensorChannel)) {
   p <- ggplot(subset_data, aes(x = Time, y = Amplitude)) +
     geom_point(alpha = 0.3, size = 0.5, color = ifelse(grepl("AgCl", sensor_channel), "#d9020d", "#0066CC")) +
     labs(
-      title = ifelse(grepl("AgCl", sensor_channel), gsub("^(AgCl|PPHG) ", "", sensor_channel), ""),
+      title = ifelse(grepl("^(AgCl|PPHG)", sensor_channel), gsub("^(AgCl|PPHG) ", "", sensor_channel), ""),
       x = "",
       y = "Amplitude (\u00B5V)",
     ) +
@@ -326,7 +326,7 @@ if (generate_all_participant_plots) {
       p <- ggplot(subset_data, aes(x = Time, y = Amplitude)) +
         geom_point(alpha = 0.3, size = 0.5, color = ifelse(grepl("AgCl", sensor_channel), "#d9020d", "#0066CC")) +
         labs(
-          title = ifelse(grepl("AgCl", sensor_channel), gsub("^(AgCl|PPHG) ", "", sensor_channel), ""),
+          title = ifelse(grepl("^(AgCl|PPHG) ", sensor_channel), gsub("^(AgCl|PPHG) ", "", sensor_channel), ""),
           x = "",
           y = "Amplitude (\u00B5V)"
         ) +
