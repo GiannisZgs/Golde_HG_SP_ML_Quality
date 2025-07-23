@@ -599,7 +599,7 @@ create_circular_barplot <- function(sensor_data, sensor_name, palette = NULL, sh
                      name = "Metric",
                      labels = metric_labels_to_use) +
     labs(
-      title = paste0(sensor_name, " Sensor Metrics Overview"),
+      title = paste0(sensor_name, " Performance Overview"),
       x = NULL,
       y = NULL
     ) +
@@ -611,7 +611,7 @@ create_circular_barplot <- function(sensor_data, sensor_name, palette = NULL, sh
       panel.grid.major.x = element_blank(),
       panel.grid.minor = element_blank(),
       panel.grid.major.y = element_line(color = "gray80", size = 0.5),
-      plot.title = element_text(size = 40, hjust = 0.5),
+      plot.title = element_text(size = 50, hjust = 0.5),
       plot.caption = element_text(size = 10, hjust = 0.5),
       legend.position = ifelse(show_legend, "bottom", "none"),
       legend.title = element_blank(),

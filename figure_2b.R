@@ -246,7 +246,7 @@ create_profile_cluster_visualization <- function(data, sensor, channel, particip
     theme_minimal() +
     theme(
       legend.position = "none",
-      plot.title = element_text(size = 80, face = "bold"),
+      plot.title = element_text(size = 80),
       axis.title = element_text(size = 80),
       axis.text = element_blank(),
       legend.text = element_text(size = 9),
