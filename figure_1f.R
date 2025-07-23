@@ -110,6 +110,9 @@ extract_metrics_data <- function() {
 # Extract all metrics data
 metrics_data <- extract_metrics_data()
 
+#To limit y axis at 10
+metrics_data <- metrics_data[metrics_data$Value <= 10, ]
+
 # Clean up channel names for display
 metrics_data$Channel <- gsub("ch1", "L1", metrics_data$Channel)
 metrics_data$Channel <- gsub("ch2", "L2", metrics_data$Channel)
@@ -190,6 +193,7 @@ create_metric_plot <- function(data, metric_name, plot_type = "boxplot") {
       x = "",
       y = "Deviation"
     ) +
+    coord_cartesian(ylim = c(NA, 10)) +  # Add this line to cap y-axis at 10
     theme_minimal() +
     theme(
       axis.text.x = element_text(angle = 45, hjust = 1, size = 31),
