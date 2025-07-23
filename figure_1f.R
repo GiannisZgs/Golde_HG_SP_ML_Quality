@@ -111,9 +111,9 @@ extract_metrics_data <- function() {
 metrics_data <- extract_metrics_data()
 
 # Clean up channel names for display
-metrics_data$Channel <- gsub("ch1", "Lead 1", metrics_data$Channel)
-metrics_data$Channel <- gsub("ch2", "Lead 2", metrics_data$Channel)
-metrics_data$Channel <- gsub("ch3", "Lead 3", metrics_data$Channel)
+metrics_data$Channel <- gsub("ch1", "L1", metrics_data$Channel)
+metrics_data$Channel <- gsub("ch2", "L2", metrics_data$Channel)
+metrics_data$Channel <- gsub("ch3", "L3", metrics_data$Channel)
 
 metrics_data$SensorChannel <- paste(metrics_data$SensorLabel, metrics_data$Channel)
 
@@ -192,10 +192,10 @@ create_metric_plot <- function(data, metric_name, plot_type = "boxplot") {
     ) +
     theme_minimal() +
     theme(
-      axis.text.x = element_text(angle = 45, hjust = 1, size = 32),
-      axis.text.y = element_text(size = 32),
-      axis.title = element_text(size = 32),
-      plot.title = element_text(size = 32, face = "bold"),
+      axis.text.x = element_text(angle = 45, hjust = 1, size = 31),
+      axis.text.y = element_text(size = 31),
+      axis.title = element_text(size = 31),
+      plot.title = element_text(size = 31, face = "bold"),
       legend.position = "none",
       panel.grid.minor = element_blank(),
       panel.background = element_rect(fill = "white", color = NA),
@@ -312,13 +312,13 @@ for (metric in metrics) {
     ) +
     theme_minimal() +
     theme(
-      axis.text.x = element_text(angle = 45, hjust = 1, size = 32),
-      axis.text.y = element_text(size = 32),
-      axis.title = element_text(size = 32),
+      axis.text.x = element_text(angle = 45, hjust = 1, size = 31),
+      axis.text.y = element_text(size = 31),
+      axis.title = element_text(size = 31),
       legend.position = "none",
       legend.title = element_text(size = 12),
-      plot.title = element_text(size = 32),
-      strip.text = element_text(size = 32),
+      plot.title = element_text(size = 31),
+      strip.text = element_text(size = 31),
       panel.grid.minor = element_blank(),
       panel.background = element_rect(fill = "white", color = NA),
       plot.background = element_rect(fill = "white", color = NA)
@@ -343,13 +343,13 @@ for (metric in metrics) {
     ) +
     theme_minimal() +
     theme(
-      axis.text.x = element_text(angle = 45, hjust = 1, size = 32),
-      axis.text.y = element_text(size = 32),
-      axis.title = element_text(size = 32),
+      axis.text.x = element_text(angle = 45, hjust = 1, size = 31),
+      axis.text.y = element_text(size = 31),
+      axis.title = element_text(size = 31),
       legend.position = "none",
       legend.title = element_text(size = 12),
-      plot.title = element_text(size = 32),
-      strip.text = element_text(size = 32),
+      plot.title = element_text(size = 31),
+      strip.text = element_text(size = 31),
       panel.grid.minor = element_blank(),
       panel.background = element_rect(fill = "white", color = NA),
       plot.background = element_rect(fill = "white", color = NA)
@@ -373,13 +373,13 @@ for (metric in metrics) {
     ) +
     theme_minimal() +
     theme(
-      axis.text.x = element_text(angle = 45, hjust = 1, size = 32),
-      axis.text.y = element_text(size = 32),
-      axis.title = element_text(size = 32),
+      axis.text.x = element_text(angle = 45, hjust = 1, size = 31),
+      axis.text.y = element_text(size = 31),
+      axis.title = element_text(size = 31),
       legend.position = "none",
       legend.title = element_text(size = 12),
-      plot.title = element_text(size = 32),
-      strip.text = element_text(size = 32),
+      plot.title = element_text(size = 31),
+      strip.text = element_text(size = 31),
       panel.grid.minor = element_blank(),
       panel.background = element_rect(fill = "white", color = NA),
       plot.background = element_rect(fill = "white", color = NA)

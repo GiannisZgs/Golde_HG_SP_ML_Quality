@@ -15,12 +15,12 @@ library(ggrepel)
 data <- fromJSON(txt = "/home/giannis/Documents/ECG HG paper/results_data/manually_cleaned_channel_id_results.json", simplifyVector = FALSE)
 
 # Create output directory if it doesn't exist
-output_dir <- paste0("R_figures/figure_1d_B/without_labels/")
+output_dir <- paste0("R_figures/figure_1d_B/with_labels/")
 if (!dir.exists(output_dir)) {
   dir.create(output_dir, recursive = TRUE)
 }
 
-show_labels <- FALSE
+show_labels <- TRUE
 
 fs <- 200
 selected_channels <- c("ch1", "ch2","ch3")
@@ -186,7 +186,7 @@ for (channel in selected_channels) {
       labs(
         title = "",
         x = "Time (s)",
-        y = "Amplitude",
+        y = "Amplitude (\u00B5V)",
         color = "",
         fill = "Sensor Type"
       ) +

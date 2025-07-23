@@ -9,7 +9,7 @@ library(grid)
 library(cowplot)
 
 use <- "agcl"  
-lead_to_plot <- 1
+lead_to_plot <- 3
 
 if (use == "hg") {
     data_sensor <- readMat("hg_p5.mat")
@@ -18,9 +18,11 @@ if (use == "hg") {
 }
 
 artifacts <- list(
-  list(start = 4, end = 8, label = "Motion Artifact 1", position = "left"),
-  list(start = 17, end = 21, label = "Motion Artifact 2", position = "right")
+  list(start = 4, end = 8, label = "Artifact 1", position = "left"),
+  list(start = 17, end = 21, label = "Artifact 2", position = "right")
 )
+#agcl 1st Art.: 4 8 
+#hg 1st Art.: 10-14
 
 
 if (use == "hg"){
@@ -32,12 +34,12 @@ if (use == "hg"){
 }
 
 if (use == "hg") {
-  sensor_raw_label <- "PPHG Raw"
-  sensor_processed_label <- "PPHG Processed"
+  sensor_raw_label <- "Raw"
+  sensor_processed_label <- "Processed"
   sensor_color_values <- c("#000000", "#0066CC")  
 } else {
-  sensor_raw_label <- "AgCl Raw"
-  sensor_processed_label <- "AgCl Processed"
+  sensor_raw_label <- "Raw"
+  sensor_processed_label <- "Processed"
   sensor_color_values <- c("#000000", "#d9020d")  
 }
 
@@ -65,7 +67,7 @@ main_plot <- ggplot(ecg_data, aes(x = Time, y = Amplitude, color = Sensor)) +
   labs(
     title = "",
     x = "Time (s)",
-    y = expression("Amplitude ("*mu*"V)"),
+    y = "Amplitude (\u00B5V)",
     color = ""
   ) +
   theme_minimal_grid(font_size = 10) + 
@@ -165,7 +167,7 @@ for (i in 1:length(artifacts)) {
       label = artifact$label, 
       hjust = hjust_val,
       vjust = 3,
-      size = 6, 
+      size = 7, 
       fontface = "bold"
     )
   
@@ -187,4 +189,4 @@ for (i in 1:length(artifacts)) {
 print(final_plot)
 
 ggsave(paste0("R_figures/figure_1c/",use,"_lead", lead_to_plot, "_with_enlarged_bubbles.png"), 
-       final_plot, width = 12, height = 8, dpi = 300, bg = "white")
+       final_plot, width = 8, height = 6, dpi = 300, bg = "white")

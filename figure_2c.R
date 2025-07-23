@@ -144,11 +144,11 @@ create_tsne_plots <- function(data, sensor, save_individual = TRUE) {
     theme_minimal() +
     theme(
       legend.position = "bottom",
-      plot.title = element_text(size = 14, face = "bold"),
-      axis.title = element_text(size = 12),
-      axis.text = element_text(size = 10),
-      legend.title = element_text(size = 12),
-      legend.text = element_text(size = 10)
+      plot.title = element_text(size = 20),
+      axis.title = element_text(size = 20),
+      axis.text = element_text(size = 15),
+      legend.title = element_text(size = 15),
+      legend.text = element_text(size = 15)
     )
   
   # Create predictions t-SNE plot with correct correspondence colors
@@ -164,11 +164,11 @@ create_tsne_plots <- function(data, sensor, save_individual = TRUE) {
     theme_minimal() +
     theme(
       legend.position = "bottom",
-      plot.title = element_text(size = 14, face = "bold"),
-      axis.title = element_text(size = 12),
-      axis.text = element_text(size = 10),
-      legend.title = element_text(size = 12),
-      legend.text = element_text(size = 10)
+      plot.title = element_text(size = 20),
+      axis.title = element_text(size = 20),
+      axis.text = element_text(size = 15),
+      legend.title = element_text(size = 15),
+      legend.text = element_text(size = 15)
     )
   
   # Extract metrics
@@ -200,16 +200,16 @@ create_tsne_plots <- function(data, sensor, save_individual = TRUE) {
       subtitle = metrics_text,
       caption = correspondence_text,
       theme = theme(
-        plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
-        plot.subtitle = element_text(size = 12, hjust = 0.5),
-        plot.caption = element_text(size = 10, hjust = 0.5)
+        plot.title = element_text(size = 23,  hjust = 0.5),
+        plot.subtitle = element_text(size = 15, hjust = 0.5),
+        plot.caption = element_text(size = 12, hjust = 0.5)
       )
     )
   
   # Save individual plot if requested
   if(save_individual) {
     plot_file <- paste0(output_dir, "tsne_", sensor, ".png")
-    ggsave(plot_file, combined_plot, width = 12, height = 8, dpi = 300, bg = "white")
+    ggsave(plot_file, combined_plot, width = 8, height = 6, dpi = 300, bg = "white")
     cat("Saved t-SNE plot for", sensor, "to:", plot_file, "\n")
   }
   
@@ -387,8 +387,8 @@ create_sensor_cluster_visualization <- function(data, sensor) {
     theme_minimal() +
     theme(
       legend.position = "none",
-      plot.title = element_text(size = 30, face = "bold"),
-      axis.title = element_text(size = 30),
+      plot.title = element_text(size = 65),
+      axis.title = element_text(size = 65),
       axis.text = element_blank(),
       axis.ticks = element_blank()
     )
@@ -496,19 +496,6 @@ create_sensor_cluster_visualization <- function(data, sensor) {
     x_centroid <- cluster_centroids$x[centroid_idx]
     y_centroid <- cluster_centroids$y[centroid_idx]
     
-    # Add cluster label near the centroid
-    final_plot <- final_plot +
-      geom_label(
-        data = data.frame(x = x_centroid, y = y_centroid, label = paste0("C", cluster_id)),
-        aes(x = x, y = y, label = label),
-        inherit.aes = FALSE,
-        fill = "white",
-        color = "black",
-        label.size = 0.5,
-        size = 4,
-        fontface = "bold"
-      )
-    
     # Get bubble position
     x_bubble <- x_bubble_pos[i]
     y_bubble <- y_bubble_pos[i]
@@ -613,7 +600,7 @@ for (sensor in sensors) {
     
     # Save the plot
     plot_file <- paste0(output_dir, "channel_clusters_", sensor, ".png")
-    ggsave(plot_file, cluster_plot, width = 24, height = 16, dpi = 300, bg = "white", limitsize = FALSE)
+    ggsave(plot_file, cluster_plot, width = 20, height = 15, dpi = 300, bg = "white", limitsize = FALSE)
     cat("Saved cluster visualization for", sensor, "to:", plot_file, "\n")
   }
 }
@@ -700,8 +687,8 @@ create_improved_visualization <- function(data, sensor) {
     theme_minimal() +
     theme(
       legend.position = "none",
-      plot.title = element_text(size = 30, face = "bold"),
-      axis.title = element_text(size = 30),
+      plot.title = element_text(size = 40),
+      axis.title = element_text(size = 40),
       axis.text = element_blank(),
       legend.title = element_text(size = 12),
       legend.text = element_text(size = 10)
@@ -720,8 +707,8 @@ create_improved_visualization <- function(data, sensor) {
     theme_minimal() +
     theme(
       legend.position = "none",
-      plot.title = element_text(size = 30, face = "bold"),
-      axis.title = element_text(size = 30),
+      plot.title = element_text(size = 40),
+      axis.title = element_text(size = 40),
       axis.text = element_blank(),
       legend.title = element_text(size = 12),
       legend.text = element_text(size = 10)
@@ -756,24 +743,6 @@ create_improved_visualization <- function(data, sensor) {
     }
   }
   
-  # Add cluster labels to the prediction plot
-  for (i in 1:nrow(cluster_centroids)) {
-    pred_plot <- pred_plot +
-      geom_label(
-        data = data.frame(
-          x = cluster_centroids$x[i], 
-          y = cluster_centroids$y[i], 
-          label = paste0("C", cluster_centroids$cluster[i])
-        ),
-        aes(x = x, y = y, label = label),
-        inherit.aes = FALSE,
-        fill = "white",
-        color = "black",
-        label.size = 0.5,
-        size = 3.5,
-        fontface = "bold"
-      )
-  }
   
   # Create waveform bubbles
   class_waveform_bubbles <- list()
@@ -895,7 +864,7 @@ for (sensor in sensors) {
     # Save the plot
     plot_file <- paste0(output_dir, "improved_visualization_", sensor, ".png")
     # Use a wider aspect ratio to ensure bubbles fit properly
-    ggsave(plot_file, improved_plot, width = 14, height = 10, dpi = 300, bg = "white")
+    ggsave(plot_file, improved_plot, width = 16, height = 12, dpi = 300, bg = "white")
     cat("Saved improved visualization for", sensor, "to:", plot_file, "\n")
   }
 }

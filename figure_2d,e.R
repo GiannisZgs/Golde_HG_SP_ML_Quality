@@ -22,7 +22,7 @@ if (!dir.exists(output_dir)) {
 
 # Define sensors and channels
 channels <- c("ch1", "ch2", "ch3")
-channel_labels <- c("ch1" = "Lead 1", "ch2" = "Lead 2", "ch3" = "Lead 3")
+channel_labels <- c("ch1" = "L1", "ch2" = "L2", "ch3" = "L3")
 sensors <- c("AgCl", "HG")
 sensor_labels <- c("AgCl" = "AgCl", "HG" = "PPHG")
 
@@ -274,11 +274,11 @@ create_plot <- function(data, plot_type, x_var = "Channel", color_var = "Sensor"
     theme_minimal() +
     theme(
       legend.position = "none",
-      axis.text.x = element_text(angle = 45, hjust = 1, size = 25),
-      axis.text.y = element_text(size = 25),
-      axis.title = element_text(size = 25),
-      strip.text = element_text(size = 25),
-      plot.title = element_text(size = 25),
+      axis.text.x = element_text(angle = 45, hjust = 1, size = 31),
+      axis.text.y = element_text(size = 31),
+      axis.title = element_text(size = 31),
+      strip.text = element_text(size = 31),
+      plot.title = element_text(size = 31),
       panel.grid.minor = element_blank(),
       panel.background = element_rect(fill = "white", color = NA),
       plot.background = element_rect(fill = "white", color = NA)
@@ -293,11 +293,11 @@ if (nrow(mse_data) > 0) {
   mse_data$ChannelLabel <- factor(mse_data$ChannelLabel, levels = channel_labels)
   
   mse_boxplot <- create_plot(mse_data, "boxplot", "ChannelLabel", NULL, NULL, 
-                            "Normalized Root Mean Squared Error", "NRMSE")
+                            "", "NRMSE")
   mse_violin <- create_plot(mse_data, "violin", "ChannelLabel", NULL, NULL,
-                           "Normalized Root Mean Squared Error", "NRMSE")
+                           "", "NRMSE")
   mse_beeswarm <- create_plot(mse_data, "beeswarm", "ChannelLabel", NULL, NULL,
-                             "Normalized Root Mean Squared Error", "NRMSE")
+                             "", "NRMSE")
   
   # Save plots
   ggsave(paste0(output_dir, "mse_boxplot.png"), mse_boxplot, width = 8, height = 6, dpi = 300, bg = "white")
@@ -315,11 +315,11 @@ if (nrow(xcorr_data) > 0) {
   xcorr_data$ChannelLabel <- factor(xcorr_data$ChannelLabel, levels = channel_labels)
   
   xcorr_boxplot <- create_plot(xcorr_data, "boxplot", "ChannelLabel", NULL, NULL,
-                              "Cross-Correlation", "Cross-Correlation")
+                              "", "Cross-Correlation")
   xcorr_violin <- create_plot(xcorr_data, "violin", "ChannelLabel", NULL, NULL,
-                             "Cross-Correlation", "Cross-Correlation")
+                             "", "Cross-Correlation")
   xcorr_beeswarm <- create_plot(xcorr_data, "beeswarm", "ChannelLabel", NULL, NULL,
-                               "Cross-Correlation", "Cross-Correlation")
+                               "", "Cross-Correlation")
   
   # Save plots
   ggsave(paste0(output_dir, "xcorr_boxplot.png"), xcorr_boxplot, width = 8, height = 6, dpi = 300, bg = "white")
@@ -379,9 +379,9 @@ if (nrow(features_data) > 0) {
     
     # Save plots
     clean_name <- gsub(" ", "_", tolower(metric))
-    ggsave(paste0(output_dir, clean_name, "_boxplot.png"), boxplot, width = 10, height = 6, dpi = 300, bg = "white")
-    ggsave(paste0(output_dir, clean_name, "_violin.png"), violin, width = 10, height = 6, dpi = 300, bg = "white")
-    ggsave(paste0(output_dir, clean_name, "_beeswarm.png"), beeswarm, width = 10, height = 6, dpi = 300, bg = "white")
+    ggsave(paste0(output_dir, clean_name, "_boxplot.png"), boxplot, width = 8, height = 6, dpi = 300, bg = "white")
+    ggsave(paste0(output_dir, clean_name, "_violin.png"), violin, width = 8, height = 6, dpi = 300, bg = "white")
+    ggsave(paste0(output_dir, clean_name, "_beeswarm.png"), beeswarm, width = 8, height = 6, dpi = 300, bg = "white")
     
     cat("Created plots for", metric_display, "\n")
   }

@@ -198,7 +198,7 @@ for (participant in selected_participants) {
         labs(
           title = "",
           x = "Time (s)",
-          y = "Amplitude",
+          y = "Amplitude (\u00B5V)",
           color = "",
           fill = "Sensor Type"
         ) +

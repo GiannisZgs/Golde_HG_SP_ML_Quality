@@ -611,11 +611,11 @@ create_circular_barplot <- function(sensor_data, sensor_name, palette = NULL, sh
       panel.grid.major.x = element_blank(),
       panel.grid.minor = element_blank(),
       panel.grid.major.y = element_line(color = "gray80", size = 0.5),
-      plot.title = element_text(size = 30, face = "bold", hjust = 0.5),
+      plot.title = element_text(size = 40, hjust = 0.5),
       plot.caption = element_text(size = 10, hjust = 0.5),
       legend.position = ifelse(show_legend, "bottom", "none"),
       legend.title = element_blank(),
-      legend.text = element_text(size = 19),
+      legend.text = element_text(size = 20),
       panel.border = element_blank(),
       axis.line = element_blank()
     )
@@ -719,37 +719,37 @@ pphg_circular <- create_circular_barplot(pphg_data, "PPHG", metric_palette, show
 
 
 agcl_with_labels <- ggdraw(agcl_circular) + 
-  draw_label("Lead 1", x = 0.8, y = 0.8, fontface = "bold", size = 25, 
+  draw_label("Lead 1", x = 0.8, y = 0.8,  size = 35, 
              hjust = 0.5, vjust = 0.5, color = "black", 
              fontfamily = "sans") +
-  draw_label("Lead 2", x = 0.6, y = 0.12, fontface = "bold", size = 25, 
+  draw_label("Lead 2", x = 0.6, y = 0.12, size = 35, 
              hjust = 0.5, vjust = 0.5, color = "black", 
              fontfamily = "sans") +
-  draw_label("Lead 3", x = 0.1, y = 0.5, fontface = "bold", size = 25, 
+  draw_label("Lead 3", x = 0.1, y = 0.5,  size = 35, 
              hjust = 0.5, vjust = 0.5, color = "black", 
              fontfamily = "sans") +
-  draw_label("Channel ID", x = 0.3, y = 0.9, fontface = "bold", size = 25, 
+  draw_label("Channel ID", x = 0.3, y = 0.9, size = 35, 
              hjust = 0.5, vjust = 0.5, color = "black", 
              fontfamily = "sans")
 
 pphg_with_labels <- ggdraw(pphg_circular) + 
-  draw_label("Lead 1", x = 0.8, y = 0.8, fontface = "bold", size = 25, 
+  draw_label("Lead 1", x = 0.8, y = 0.8, size = 35, 
              hjust = 0.5, vjust = 0.5, color = "black", 
              fontfamily = "sans") +
-  draw_label("Lead 2", x = 0.6, y = 0.12, fontface = "bold", size = 25, 
+  draw_label("Lead 2", x = 0.6, y = 0.12, size = 35, 
              hjust = 0.5, vjust = 0.5, color = "black", 
              fontfamily = "sans") +
-  draw_label("Lead 3", x = 0.1, y = 0.5, fontface = "bold", size = 25, 
+  draw_label("Lead 3", x = 0.1, y = 0.5, size = 35, 
              hjust = 0.5, vjust = 0.5, color = "black", 
              fontfamily = "sans") +
-  draw_label("Channel ID", x = 0.3, y = 0.9, fontface = "bold", size = 25, 
+  draw_label("Channel ID", x = 0.3, y = 0.9, size = 35, 
              hjust = 0.5, vjust = 0.5, color = "black", 
              fontfamily = "sans")
 
 ggsave(paste0(output_dir, "agcl_circular_barplot.png"), agcl_with_labels, 
-       width = 14, height = 12, dpi = 300, bg = "white")
+       width = 16, height = 12, dpi = 300, bg = "white")
 ggsave(paste0(output_dir, "pphg_circular_barplot.png"), pphg_with_labels, 
-       width = 14, height = 12, dpi = 300, bg = "white")
+       width = 16, height = 12, dpi = 300, bg = "white")
 
 # Extract the legend from the AgCl plot to use in the combined plot
 legend <- cowplot::get_legend(
@@ -781,5 +781,5 @@ combined_plot <- cowplot::plot_grid(
 )
 
 # Save the combined plot
-ggsave(paste0(output_dir, "combined_circular_barplots.png"), combined_plot, 
-       width = 18, height = 12, dpi = 300, bg = "white")
+#ggsave(paste0(output_dir, "combined_circular_barplots.png"), combined_plot, 
+#       width = 18, height = 12, dpi = 300, bg = "white")

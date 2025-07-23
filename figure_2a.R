@@ -11,7 +11,7 @@ library(ggrepel)
 
 nans_removed = TRUE #true if processing has already been done
 data_path <- "/home/giannis/Documents/ECG HG paper/results_data/heartbeat_profiles_MA.json"
-single_participant <- "p10"
+single_participant <- "p5"
 
 if (nans_removed) {
   data <- fromJSON(txt = data_path, simplifyVector = FALSE)
@@ -88,9 +88,9 @@ waveform_data <- waveform_data %>% filter(!is.na(Amplitude))
 waveform_data$Time <- (waveform_data$Time - 1) / fs
 
 # Map channel names to "Lead 1", "Lead 2", "Lead 3"
-waveform_data$Channel <- gsub("ch1", "Lead 1", waveform_data$Channel)
-waveform_data$Channel <- gsub("ch2", "Lead 2", waveform_data$Channel)
-waveform_data$Channel <- gsub("ch3", "Lead 3", waveform_data$Channel)
+waveform_data$Channel <- gsub("ch1", "L1", waveform_data$Channel)
+waveform_data$Channel <- gsub("ch2", "L2", waveform_data$Channel)
+waveform_data$Channel <- gsub("ch3", "L3", waveform_data$Channel)
 
 # Combine Sensor and Channel into a single variable
 waveform_data$SensorChannel <- paste(waveform_data$Sensor, waveform_data$Channel)
@@ -133,7 +133,7 @@ for (sensor_channel in unique(waveform_data_agg$SensorChannel)) {
     labs(
       title = ifelse(grepl("AgCl", sensor_channel), gsub("^(AgCl|PPHG) ", "", sensor_channel), ""),
       x = "",
-      y = "Amplitude"
+      y = "Amplitude (\u00B5V)"
     ) +
     theme_minimal() +
     theme(
@@ -189,7 +189,7 @@ for (sensor_channel in unique(waveform_data$SensorChannel)) {
     labs(
       title = ifelse(grepl("AgCl", sensor_channel), gsub("^(AgCl|PPHG) ", "", sensor_channel), ""),
       x = "",
-      y = "Amplitude"
+      y = "Amplitude (\u00B5V)"
     ) +
     theme_minimal() +
     theme(
@@ -257,7 +257,7 @@ for (sensor_channel in unique(waveform_data$SensorChannel)) {
     labs(
       title = ifelse(grepl("AgCl", sensor_channel), gsub("^(AgCl|PPHG) ", "", sensor_channel), ""),
       x = "",
-      y = "Amplitude"
+      y = "Amplitude (\u00B5V)",
     ) +
     theme_minimal() +
     theme(
@@ -328,7 +328,7 @@ if (generate_all_participant_plots) {
         labs(
           title = ifelse(grepl("AgCl", sensor_channel), gsub("^(AgCl|PPHG) ", "", sensor_channel), ""),
           x = "",
-          y = "Amplitude"
+          y = "Amplitude (\u00B5V)"
         ) +
         theme_minimal() +
         theme(
