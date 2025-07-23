@@ -19,7 +19,7 @@ data_path <- paste0("/home/giannis/Documents/ECG HG paper/results_data/metrics_d
 data <- fromJSON(txt = data_path, simplifyVector = FALSE)
 
 # Create output directory
-output_dir <- "R_figures/figure_1f/"
+output_dir <- "R_figures/figure_1f_bigger_fonts/"
 if (!dir.exists(output_dir)) {
   dir.create(output_dir, recursive = TRUE)
 }
@@ -192,9 +192,10 @@ create_metric_plot <- function(data, metric_name, plot_type = "boxplot") {
     ) +
     theme_minimal() +
     theme(
-      axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
-      axis.title = element_text(size = 10),
-      plot.title = element_text(size = 10, face = "bold"),
+      axis.text.x = element_text(angle = 45, hjust = 1, size = 32),
+      axis.text.y = element_text(size = 32),
+      axis.title = element_text(size = 32),
+      plot.title = element_text(size = 32, face = "bold"),
       legend.position = "none",
       panel.grid.minor = element_blank(),
       panel.background = element_rect(fill = "white", color = NA),
@@ -311,13 +312,13 @@ for (metric in metrics) {
     ) +
     theme_minimal() +
     theme(
-      axis.text.x = element_text(angle = 45, hjust = 1, size = 25),
-      axis.text.y = element_text(size = 25),
-      axis.title = element_text(size = 25),
+      axis.text.x = element_text(angle = 45, hjust = 1, size = 32),
+      axis.text.y = element_text(size = 32),
+      axis.title = element_text(size = 32),
       legend.position = "none",
       legend.title = element_text(size = 12),
-      plot.title = element_text(size = 25),
-      strip.text = element_text(size = 25),
+      plot.title = element_text(size = 32),
+      strip.text = element_text(size = 32),
       panel.grid.minor = element_blank(),
       panel.background = element_rect(fill = "white", color = NA),
       plot.background = element_rect(fill = "white", color = NA)
@@ -342,13 +343,13 @@ for (metric in metrics) {
     ) +
     theme_minimal() +
     theme(
-      axis.text.x = element_text(angle = 45, hjust = 1, size = 18),
-      axis.text.y = element_text(size = 18),
-      axis.title = element_text(size = 18),
+      axis.text.x = element_text(angle = 45, hjust = 1, size = 32),
+      axis.text.y = element_text(size = 32),
+      axis.title = element_text(size = 32),
       legend.position = "none",
       legend.title = element_text(size = 12),
-      plot.title = element_text(size = 20),
-      strip.text = element_text(size = 18),
+      plot.title = element_text(size = 32),
+      strip.text = element_text(size = 32),
       panel.grid.minor = element_blank(),
       panel.background = element_rect(fill = "white", color = NA),
       plot.background = element_rect(fill = "white", color = NA)
@@ -372,13 +373,13 @@ for (metric in metrics) {
     ) +
     theme_minimal() +
     theme(
-      axis.text.x = element_text(angle = 45, hjust = 1, size = 18),
-      axis.text.y = element_text(size = 18),
-      axis.title = element_text(size = 18),
+      axis.text.x = element_text(angle = 45, hjust = 1, size = 32),
+      axis.text.y = element_text(size = 32),
+      axis.title = element_text(size = 32),
       legend.position = "none",
       legend.title = element_text(size = 12),
-      plot.title = element_text(size = 20),
-      strip.text = element_text(size = 18),
+      plot.title = element_text(size = 32),
+      strip.text = element_text(size = 32),
       panel.grid.minor = element_blank(),
       panel.background = element_rect(fill = "white", color = NA),
       plot.background = element_rect(fill = "white", color = NA)
