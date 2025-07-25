@@ -15,7 +15,7 @@ num_clusters_multiplier = 1; %number of clusters will be the number of participa
 leads = 3;
 sensors = ["AgCl","HG"];
 sensors_num = 2;
-rng(1); % for reproducibility
+rng(1); 
 
 %% Take all channels, sensors of all participants, cluster them into N_sensors*N_channels clusters
 %Gather all data, assign labels according to channel-sensor
@@ -41,7 +41,7 @@ for s = 1:sensors_num
     channel = channel';
     %% Reduce data to visualize - PCA
     %Ensure kept components explain at least 95% of the variability
-    %Don't go over 50 components
+    %Maximum 50 components
     [coeff, score, latent, ~, explained,mu] = pca(channel);
     cumulative_explained = cumsum(explained);
     num_components = find(cumulative_explained >= 99, 1, 'first');

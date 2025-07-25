@@ -1,5 +1,5 @@
 function [M,varargout] = batch_inter_sensor_metrics(beat1, beat2, metric,varargin)
-% Assumes that beat1 and beat2 are batches of beats of the same length    
+% beat1 and beat2 should be batches of beats of the same length    
 % beat1: [L x N1], beat2: [L x N2]
     [L1, N1] = size(beat1);
     [L2, N2] = size(beat2);
@@ -72,7 +72,7 @@ function [M,varargout] = batch_inter_sensor_metrics(beat1, beat2, metric,varargi
 %                     plot(edges(1:end-1), p1, 'LineWidth', 2, 'Color', [0.1 0.45 0.8], 'DisplayName', 'Hg Sensor');
 %                     plot(edges(1:end-1), p2, 'LineWidth', 2, 'Color', [0.8 0.2 0.2], 'DisplayName', 'AgCl Sensor');
 % 
-%                     % Optionally, add area shading under curves (comment out if not needed)
+%                     % Optional area shading under curves (comment out if not needed)
 %                     area(edges(1:end-1), p1, 'FaceAlpha', 0.2, 'FaceColor', [0.1 0.45 0.8], 'EdgeColor', 'none');
 %                     area(edges(1:end-1), p2, 'FaceAlpha', 0.2, 'FaceColor', [0.8 0.2 0.2], 'EdgeColor', 'none');
 % 

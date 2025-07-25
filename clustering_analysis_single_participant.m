@@ -15,7 +15,7 @@ leads = 3;
 sensors = ["AgCl","HG"];
 sensors_num = 2;
 fs = 200;
-rng(1); % for reproducibility
+rng(1); 
 %% Take all channels of all participants, both sensors and cluster them into N_participants clusters
 
 for s = 1:sensors_num
@@ -42,7 +42,7 @@ for s = 1:sensors_num
         
         %% Reduce data to visualize - PCA
         %Ensure kept components explain at least 99% of the variability
-        %Don't go over 50 components
+        %Maximum of 50 components
         [coeff, score, latent, ~, explained,mu] = pca(channel);
         cumulative_explained = cumsum(explained);
         num_components = find(cumulative_explained >= 99, 1, 'first');

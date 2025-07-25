@@ -49,7 +49,7 @@ for s = 1:sensors_num
     channel = channel';
     %% Reduce data to visualize - PCA
     %Ensure kept components explain at least 95% of the variability
-    %Don't go over 50 components
+    %Maximum 50 components are selected
     [coeff, score, latent, ~, explained,mu] = pca(channel);
     cumulative_explained = cumsum(explained);
     num_components = find(cumulative_explained >= 99, 1, 'first');

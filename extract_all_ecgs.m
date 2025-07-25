@@ -1,15 +1,3 @@
-%We need to analyze all ECG channels as we are interested on the
-%morphology - different waves are more pronounced across different leads
-%Examine R peak similarity from ECG1 
-%Examine T-wave similarity from ECG2 or 3
-%Check if lead 1 gives consistently more prominent R peaks
-%Same for leads 2,3
-%Impedance can help us keep segments of good quality
-%On the other hand, we need impedance to showcase the paper's argument
-%regarding quality
-
-%Participants not able to be accessed: 11 no HG1, 13 & 16 no AgCl, HG1, HG2
-%P17 AgCl: all zero in the beginning, very high noise at second-half
 close all
 clear;
 

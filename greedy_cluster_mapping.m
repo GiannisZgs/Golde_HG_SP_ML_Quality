@@ -1,6 +1,6 @@
 function [acc,macro_f1_score,micro_f1,assignments] = greedy_cluster_mapping(y_true, y_pred)
 %Greedy cluster mapping using the Hungarian (Munkres) algorithm 
-%Adapted from python code
+
     shape_cond = any((size(y_pred) == size(y_true))==0); 
     if shape_cond
         y_true = y_true';

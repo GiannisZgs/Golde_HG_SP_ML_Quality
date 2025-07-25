@@ -2,12 +2,10 @@ clear;
 close all;
 % Search windows around R-peak (in milliseconds)
 % These define the regions where the function will look for P and T waves.
-% Adjusting these can significantly impact detection accuracy.
 p_search_window_ms = 250; % Max time before R-peak to look for P-wave
 t_search_window_ms = 350; % Max time after R-peak to look for T-wave
-calcMetrics = 0; %boolean to control metric calculation
+calcMetrics = 0; 
 %% Tune this up_percentile
-
 up_percentile = 75;
 bottom_percentile = 25;
 use_filters = 1;
