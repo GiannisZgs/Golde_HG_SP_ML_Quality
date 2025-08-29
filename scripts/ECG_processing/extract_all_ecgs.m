@@ -1,21 +1,33 @@
 close all
 clear;
+%% Setup environment
+[scripts_dir, ~, ~] = fileparts(pwd);
+[root_dir, ~, ~] = fileparts(scripts_dir);
+setup_script = fullfile(root_dir,'utils','setup_environment.m');
+run(setup_script);
 
-dat_path = 'C:\Users\giann\OneDrive\Desktop\ECG HG paper\participants_v2\';
+%% Path to the dataset goes here
+data_path = 'C:\Users\giann\OneDrive\Desktop\ECG HG paper\participants_v2\';
 data_struct = struct();
 
-%% Parameters
+%% Path where results will be saved
+save_dir = 'C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\';
 save_files = true;
-data_struct.fs_ecg = 200;
-data_struct.fs_imp = 1;
+
+%% Parameters
+signals = ["AgCl","HG1","HG2"];
+num_leads = 3;
+filename = 'KMTPatient_00.kha';
+data_struct.fs_ecg = 200; %ecg sampling rate
+data_struct.fs_imp = 1; %impedance sampling rate
 window_size = data_struct.fs_ecg/data_struct.fs_imp;
-relative_window_size = 2;
+num_windows = 2; %this defines the length of the segment
 hp_cutoff = 0.05; %BW HP filter cutoff (Hz) for detrending
 hp_order = 4; %BW HP filter order 
 lp_cutoff = 90; %BW LP filter cutoff (Hz) - 100 is the Nyquist frequency
 lp_order = 4;
 notch_freq1 = 50; %Central bandstop frequency (UAE power line frequency)
-notch_freq2 = 80; %Artifact observed in some signals - may be power line harmonic
+notch_freq2 = 80; %Power line 1st harmonic artifact 
 notch_bw = 2; 
 thres_Imp = 100; %impedance > 100 kΩ considered not acceptable
 use_filters = 1; %boolean, whether to use any filters in the analysis
@@ -30,17 +42,13 @@ for i = 1:43
     participants = [participants,pid];
 end
 
-signals = ["AgCl","HG1","HG2"];
-
-filename = 'KMTPatient_00.kha';
-
 empty_fun = @(s) all(structfun(@isempty,s)); %checks if structure contains anything
 no_AgCl = [];
 no_HG1 = [];
 no_HG2 = [];
 no_HG = [];
 no_all = [];
-for p = 5%1:length(participants)
+for p = 1:length(participants)
     p_struct = struct();
     flag_empty = zeros(length(signals),1);
     for s = 1:length(signals)
@@ -52,7 +60,7 @@ for p = 5%1:length(participants)
             signal_label = 'HG2';
         end
         
-        ecg_path = fullfile(dat_path,participants(p),signals(s),filename);
+        ecg_path = fullfile(data_path,participants(p),signals(s),filename);
         if exist(ecg_path)
             try
                 [header, signal,annotations]=ConvertKHA2MAT(ecg_path);
@@ -70,13 +78,14 @@ for p = 5%1:length(participants)
             end
         else
             flag_empty(s) = 1;
-            for ch = 1:3
+            for ch = 1:num_leads
                 p_struct.(signal_label).ECG_good_qual.(['ch',int2str(ch)]) = NaN;
                 p_struct.(signal_label).Imp_good_qual.(['ch',int2str(ch)]) = NaN;
             end
             continue
         end
-
+        
+        %Current analysis is for 3 leads
         L1 = signal(1).data;
         L2 = signal(2).data;
         L3 = signal(3).data;    
@@ -106,37 +115,9 @@ for p = 5%1:length(participants)
         fprintf("Avg. |Imp| of Lead3: %d \n",avg_I3)
         fprintf("Std. |Imp| of Lead3: %d \n",std_I3)
         Imp = [Imp_L1, Imp_L2, Imp_L3];
-        
-        %Figure 1: Input
-%         figure;
-%         L = 10000;
-%         t = (0:L-1) / data_struct.fs_ecg; 
-%         titles = {'Lead I', 'Lead II', 'Lead III'};
-%         for i = 1:3
-%             subplot(3,1,i);
-%             plot(t,ECG(1:L,i), 'k');
-%             ylabel('Amplitude (mV)');
-%             title(titles{i});
-%             grid on;
-%             if i == 3
-%                 xlabel('Time (s)');
-%             end
-%         end
-%         sgtitle([signal_label ' Sensor']);
-        %detrended_ECG_hp01 = detrend_ecg_highpass(ECG,data_struct.fs_ecg,0.1,hp_order);
-        %detrended_ECG_hp02 = detrend_ecg_highpass(ECG,data_struct.fs_ecg,0.2,hp_order);
-        %detrended_ECG_hp03 = detrend_ecg_highpass(ECG,data_struct.fs_ecg,0.3,hp_order);
-        
-        if s==1
-            agcl = ECG(35000:41000,:);
-            t_vec = linspace(0,size(agcl,1)/data_struct.fs_ecg,size(agcl,1));
-        elseif s == 3
-            hg = ECG(49000:55000,:);
-            t_vec = linspace(0,size(hg,1)/data_struct.fs_ecg,size(hg,1));
-        end
+          
         
         if use_filters
-            %ECG = ECG-mean(ECG);
             [blp, alp] = butter(lp_order, lp_cutoff / (data_struct.fs_ecg/2), 'low');
             ECG_lp = filtfilt(blp, alp, ECG);
             Wn1 = [notch_freq1 - notch_bw, notch_freq1 + notch_bw] / (data_struct.fs_ecg/2);
@@ -153,35 +134,30 @@ for p = 5%1:length(participants)
         else
             ECG_filtered = ECG;
         end
-%         for ch = 1:3
-%             [psd_raw,f] = pspectrum(ECG_just_MA(:,ch),data_struct.fs_ecg);
-%             [psd_filt,f] = pspectrum(ECG_filtered(:,ch),data_struct.fs_ecg);
-%             plot(f,psd_raw)
-%             hold on
-%             plot(f,psd_filt)
-%             close all;
-%         end
-        % For all bands
 
-        %For figure 1c,  
-        if s==1
-            agcl = ECG(35000:41000,:);
-            agcl_lp = ECG_lp(35000:41000,:);
-            agcl_notch1 = ECG_just_notch1(35000:41000,:);
-            agcl_notch2 = ECG_just_notch2(35000:41000,:);
-            agcl_hp_VLF = ECG_just_hp_VLF(35000:41000,:); 
-            agcl_MA = ECG_just_MA(35000:41000,:); 
-            agcl_all_filters = ECG_filtered(35000:41000,:);  
-            save('agcl_p5.mat','t_vec','agcl','agcl_lp','agcl_notch1','agcl_notch2','agcl_hp_VLF','agcl_MA','agcl_all_filters')
-        elseif s == 3
-            hg = ECG(49000:55000,:);
-            hg_lp = ECG_lp(49000:55000,:);
-            hg_notch1 = ECG_just_notch1(49000:55000,:);
-            hg_notch2 = ECG_just_notch2(49000:55000,:);
-            hg_hp_VLF = ECG_just_hp_VLF(49000:55000,:); 
-            hg_MA = ECG_just_MA(49000:55000,:); 
-            hg_all_filters = ECG_filtered(49000:55000,:); 
-            save('hg_p5.mat','t_vec','hg','hg_lp','hg_notch1','hg_notch2','hg_hp_VLF','hg_MA','hg_all_filters')
+        %% Below is used to produce Figs 4c and S6 for participant p5 - p = 5
+        if p == 5
+            if s==1
+                agcl = ECG(35000:41000,:);
+                agcl_lp = ECG_lp(35000:41000,:);
+                agcl_notch1 = ECG_just_notch1(35000:41000,:);
+                agcl_notch2 = ECG_just_notch2(35000:41000,:);
+                agcl_hp_VLF = ECG_just_hp_VLF(35000:41000,:); 
+                agcl_MA = ECG_just_MA(35000:41000,:); 
+                agcl_all_filters = ECG_filtered(35000:41000,:);  
+                t_vec = linspace(0,size(agcl,1)/data_struct.fs_ecg,size(agcl,1));
+                save(fullfile(root_dir,'data','agcl_p5.mat'),'t_vec','agcl','agcl_lp','agcl_notch1','agcl_notch2','agcl_hp_VLF','agcl_MA','agcl_all_filters')
+            elseif s == 3
+                hg = ECG(49000:55000,:);
+                hg_lp = ECG_lp(49000:55000,:);
+                hg_notch1 = ECG_just_notch1(49000:55000,:);
+                hg_notch2 = ECG_just_notch2(49000:55000,:);
+                hg_hp_VLF = ECG_just_hp_VLF(49000:55000,:); 
+                hg_MA = ECG_just_MA(49000:55000,:); 
+                hg_all_filters = ECG_filtered(49000:55000,:); 
+                t_vec = linspace(0,size(hg,1)/data_struct.fs_ecg,size(hg,1));
+                save(fullfile(root_dir,'data','hg_p5.mat'),'t_vec','hg','hg_lp','hg_notch1','hg_notch2','hg_hp_VLF','hg_MA','hg_all_filters')
+            end
         end
         
         
@@ -227,64 +203,6 @@ for p = 5%1:length(participants)
             proc_HG2 = ECG_filtered;
         end
         
-        % For only 'powerline' band:
-        %metrics = deviation_from_noise_psd(ecg_raw, ecg_cleaned, fs, 'powerline', true);
-
-%         figure;
-%         L = 10000;
-%         t = (0:L-1) / data_struct.fs_ecg;
-%         titles = {'Raw (L1-AgCl)', 'Detr. Mov.Avg. - 1s window size', 'Detr. HP - Cutoff 0.05 Hz', 'Detr. HP - Cutoff 0.1 Hz', 'Detr. HP - Cutoff 0.2 Hz', 'Detr. HP - Cutoff 0.3 Hz'};
-%         subplot(6,1,1)
-%         plot(t,ECG(1:L,1),'k')
-%         ylabel('Amplitude (mV)');
-%         title(titles{1});
-%         grid on;
-%         subplot(6,1,2)
-%         plot(t,detrended_ECG_MA(1:L,1),'k')
-%         ylabel('Amplitude (mV)');
-%         title(titles{2});
-%         grid on;
-%         subplot(6,1,3)
-%         plot(t,detrended_ECG_hp005(1:L,1),'k')
-%         ylabel('Amplitude (mV)');
-%         title(titles{3});
-%         grid on;
-%         subplot(6,1,4)
-%         plot(t,detrended_ECG_hp01(1:L,1),'k')
-%         ylabel('Amplitude (mV)');
-%         title(titles{4});
-%         grid on;
-%         subplot(6,1,5)
-%         plot(t,detrended_ECG_hp02(1:L,1),'k')
-%         ylabel('Amplitude (mV)');
-%         title(titles{5});
-%         grid on;
-%         subplot(6,1,6)
-%         plot(t,detrended_ECG_hp03(1:L,1),'k')
-%         ylabel('Amplitude (mV)');
-%         title(titles{6});
-%         grid on;
-%         
-%         xlabel('Time (s)');
-%         sgtitle('Various detrending approaches');
-
-%         figure;
-%         L = 10000;r
-
-%         t = (0:L-1) / data_struct.fs_ecg;
-%         titles = {'Lead I', 'Lead II', 'Lead III'};
-%         for i = 1:3
-%             subplot(3,1,i);
-%             plot(t,detrended_ECG_MA(1:L,i), 'k');
-%             ylabel('Amplitude (mV)');
-%             title(titles{i});
-%             grid on;
-%             if i == 3
-%                 xlabel('Time (s)');
-%             end
-%         end
-%         sgtitle(['Detrended ' signal_label ' Sensor']);
-        
         %% Apply a QRS detection algorithm on Channel 1
         try
             [QRS_indexes,filt_dat,int_dat,thF1,thI1] = pantompkins_qrs(ECG_filtered(:,1),data_struct.fs_ecg);
@@ -321,7 +239,7 @@ for p = 5%1:length(participants)
             end
             inds_start = max((inds-1)*(data_struct.fs_ecg/data_struct.fs_imp),1);
             inds_start(2:end) = inds_start(2:end) + 1;
-            inds_end = inds_start + relative_window_size*(data_struct.fs_ecg/data_struct.fs_imp) - 1;
+            inds_end = inds_start + num_windows*window_size - 1;
 
             %Find qrs indexes that lie within the [inds_start,inds_end] interval
             
@@ -342,7 +260,7 @@ for p = 5%1:length(participants)
                 qrs_lower = find(QRS_indexes<=win_end);
                 qrs_common = intersect(qrs_higher,qrs_lower);
                 qrs_current = QRS_indexes(qrs_common);
-                if any(qrs_current > relative_window_size*window_size)
+                if any(qrs_current > num_windows*window_size)
                     %Either all or none
                     qrs_current = qrs_current - win_start + 1;
                 end
@@ -393,7 +311,6 @@ for p = 5%1:length(participants)
             ch1_concat_imp = [p_struct.HG1.Imp_good_qual.ch1'; p_struct.HG2.Imp_good_qual.ch1']';
         end        
 
-        %ch1_breakpoints = [p_struct.HG1.ECG_good_qual.ch1breakpoints, p_struct.HG2.ECG_good_qual.ch1breakpoints];
         p_struct.HG_concat.ECG_good_qual.ch1 = ch1_concat_ecg;
         p_struct.HG_concat.QRS_annot_good_qual.ch1 = ch1_concat_qrs;
         p_struct.HG_concat.Imp_good_qual.ch1 = ch1_concat_imp;
@@ -417,7 +334,6 @@ for p = 5%1:length(participants)
             ch2_concat_imp = [p_struct.HG1.Imp_good_qual.ch2'; p_struct.HG2.Imp_good_qual.ch2']';
         end
 
-        %ch2_breakpoints = [p_struct.HG1.ECG_good_qual.ch2breakpoints, p_struct.HG2.ECG_good_qual.ch2breakpoints];
         p_struct.HG_concat.ECG_good_qual.ch2 = ch2_concat_ecg;
         p_struct.HG_concat.QRS_annot_good_qual.ch2 = ch2_concat_qrs;
         p_struct.HG_concat.Imp_good_qual.ch2 = ch2_concat_imp;
@@ -442,7 +358,6 @@ for p = 5%1:length(participants)
             ch3_concat_imp = [p_struct.HG1.Imp_good_qual.ch3'; p_struct.HG2.Imp_good_qual.ch3']';
         end
 
-        %ch3_breakpoints = [p_struct.HG1.ECG_good_qual.ch3breakpoints, p_struct.HG2.ECG_good_qual.ch3breakpoints];
         p_struct.HG_concat.ECG_good_qual.ch3 = ch3_concat_ecg;
         p_struct.HG_concat.QRS_annot_good_qual.ch3 = ch3_concat_qrs;
         p_struct.HG_concat.Imp_good_qual.ch3 = ch3_concat_imp;
@@ -455,6 +370,7 @@ for p = 5%1:length(participants)
     p_struct.has_HG1 = boolean(~flag_empty(2));
     p_struct.has_HG2 = boolean(~flag_empty(3));
 
+    %% Log which participants didn't have which channels
     if flag_empty(1)
         no_AgCl = [no_AgCl participants(p)];
     end
@@ -477,10 +393,10 @@ end
 
 if save_files
     if ~use_filters
-        save("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\ECG_HG_quality_dataset_no_filters.mat","data_struct","no_HG1","no_HG2","no_HG","no_AgCl","no_all");
+        save(fullfile(save_dir,"ECG_HG_quality_dataset_no_filters.mat"),"data_struct","no_HG1","no_HG2","no_HG","no_AgCl","no_all");
     else
-        save("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\ECG_HG_quality_dataset_MA.mat","data_struct","no_HG1","no_HG2","no_HG","no_AgCl","no_all");
-        save("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\metrics_deviation_from_noise.mat","metrics","no_HG1","no_HG2","no_HG","no_AgCl","no_all");
+        save(fullfile(save_dir,"ECG_HG_quality_dataset_MA.mat"),"data_struct","no_HG1","no_HG2","no_HG","no_AgCl","no_all");
+        save(fullfile(save_dir,"metrics_deviation_from_noise.mat"),"metrics","no_HG1","no_HG2","no_HG","no_AgCl","no_all");
     end
 end
 

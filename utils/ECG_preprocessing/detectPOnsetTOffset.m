@@ -1,5 +1,5 @@
 function [p_onset_idx, t_offset_idx] = detectPOnsetTOffset(ecg_signal, sampling_frequency, r_peaks,p_search_window_ms,t_search_window_ms)
-%detectPOnsetTOffset Detects P-wave onset and T-wave offset in an ECG signal.
+%Detects P-wave onset and T-wave offset in an ECG signal.
 %   This function assumes R-peaks have already been detected and uses them
 %   as reference points.
 %

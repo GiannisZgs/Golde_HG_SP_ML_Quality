@@ -1,29 +1,35 @@
 close all
 clear;
+%% Setup environment
+[scripts_dir, ~, ~] = fileparts(pwd);
+[root_dir, ~, ~] = fileparts(scripts_dir);
+setup_script = fullfile(root_dir,'utils','setup_environment.m');
+run(setup_script);
 
-dat_path = 'C:\Users\giann\OneDrive\Desktop\ECG HG paper\Motion_artifact_cleaned_signals\Done_Nazmi_ECG_HGquality_dataset_no_filters.mat';
+%% Path to the dataset goes here
+data_path = 'C:\Users\giann\OneDrive\Desktop\ECG HG paper\Motion_artifact_cleaned_signals\manually_cleaned_ECG_HG_quality_dataset_no_filters.mat';
 
 %% Parameters
 save_files = true;
 data_struct.fs_ecg = 200;
 data_struct.fs_imp = 1;
 window_size = data_struct.fs_ecg/data_struct.fs_imp;
-relative_window_size = 2;
+num_windows = 2;
 hp_cutoff = 0.05; %BW HP filter cutoff (Hz) for detrending
 hp_order = 4; %BW HP filter order 
 lp_cutoff = 90; %BW LP filter cutoff (Hz) - 100 is the Nyquist frequency
 lp_order = 4;
 notch_freq1 = 50; %Central bandstop frequency (UAE power line frequency)
-notch_freq2 = 80; %Artifact observed in some signals - may be power line harmonic
+notch_freq2 = 80; %Power line 1st harmonic artifact 
 notch_bw = 2; 
 thres_Imp = 100; %impedance > 100 kΩ considered not acceptable
 use_filters = 1; %boolean, whether to use any filters in the analysis
 
-%% 
+%% Only for the below participants whose recordings were manually examined and cleaned
 participants = ["1","5","10","39"];
 signals = ["AgCl","HG1","HG2"];
 
-data_struct = load(dat_path); 
+data_struct = load(data_path); 
 data_struct.fs_ecg = data_struct.data_struct.fs_ecg;
 fieldss = fields(data_struct);
 
@@ -143,7 +149,7 @@ for p = 1:length(participants)
             imp_good_qual = struct();
             QRS_annot_good_qual = struct();
             for ch = 1:size(ECG,2)
-                inds_start = (1:relative_window_size*data_struct.fs_ecg:size(ECG,1));
+                inds_start = (1:num_windows*window_size:size(ECG,1));
                 inds_end = inds_start + relative_window_size*data_struct.fs_ecg - 1;
 
                 %Find qrs indexes that lie within the [inds_start,inds_end] interval
@@ -165,7 +171,7 @@ for p = 1:length(participants)
                     qrs_lower = find(QRS_indexes<=win_end);
                     qrs_common = intersect(qrs_higher,qrs_lower);
                     qrs_current = QRS_indexes(qrs_common);
-                    if any(qrs_current > relative_window_size*window_size)
+                    if any(qrs_current > num_windows*window_size)
                         %Either all or none
                         qrs_current = qrs_current - win_start + 1;
                     end
@@ -206,7 +212,6 @@ for p = 1:length(participants)
             ch1_concat_qrs = [p_struct.HG1.QRS_annot_good_qual.ch1, p_struct.HG2.QRS_annot_good_qual.ch1];
         end        
 
-        %ch1_breakpoints = [p_struct.HG1.ECG_good_qual.ch1breakpoints, p_struct.HG2.ECG_good_qual.ch1breakpoints];
         p_struct.HG_concat.ECG_good_qual.ch1 = ch1_concat_ecg;
         p_struct.HG_concat.QRS_annot_good_qual.ch1 = ch1_concat_qrs;
     end
@@ -225,7 +230,6 @@ for p = 1:length(participants)
             ch2_concat_qrs = [p_struct.HG1.QRS_annot_good_qual.ch2, p_struct.HG2.QRS_annot_good_qual.ch2];
         end
 
-        %ch2_breakpoints = [p_struct.HG1.ECG_good_qual.ch2breakpoints, p_struct.HG2.ECG_good_qual.ch2breakpoints];
         p_struct.HG_concat.ECG_good_qual.ch2 = ch2_concat_ecg;
         p_struct.HG_concat.QRS_annot_good_qual.ch2 = ch2_concat_qrs;
     end
@@ -245,7 +249,6 @@ for p = 1:length(participants)
             ch3_concat_qrs = [p_struct.HG1.QRS_annot_good_qual.ch3, p_struct.HG2.QRS_annot_good_qual.ch3];
         end
 
-        %ch3_breakpoints = [p_struct.HG1.ECG_good_qual.ch3breakpoints, p_struct.HG2.ECG_good_qual.ch3breakpoints];
         p_struct.HG_concat.ECG_good_qual.ch3 = ch3_concat_ecg;
         p_struct.HG_concat.QRS_annot_good_qual.ch3 = ch3_concat_qrs;
     end
@@ -276,13 +279,14 @@ for p = 1:length(participants)
     end
     new_data_struct.(['p',char(participants(p))]) = p_struct;
 end
+
 new_data_struct.fs_ecg = data_struct.fs_ecg;
 if save_files
     if ~use_filters
-        save("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\ECG_HG_manually_cleaned_quality_dataset_no_filters.mat","new_data_struct","no_HG1","no_HG2","no_HG","no_AgCl","no_all");
+        save(fullfile(save_dir,"ECG_HG_manually_cleaned_quality_dataset_no_filters.mat"),"new_data_struct","no_HG1","no_HG2","no_HG","no_AgCl","no_all");
     else
-        save("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\ECG_HG_manually_cleaned_quality_dataset_MA.mat","new_data_struct","no_HG1","no_HG2","no_HG","no_AgCl","no_all");
-        save("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\metrics_manually_cleaned_deviation_from_noise.mat","metrics","no_HG1","no_HG2","no_HG","no_AgCl","no_all");
+        save(fullfile(save_dir,"ECG_HG_manually_cleaned_quality_dataset_MA.mat"),"new_data_struct","no_HG1","no_HG2","no_HG","no_AgCl","no_all");
+        save(fullfile(save_dir,"metrics_manually_cleaned_deviation_from_noise.mat"),"metrics","no_HG1","no_HG2","no_HG","no_AgCl","no_all");
     end
 end
 

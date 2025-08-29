@@ -1,33 +1,45 @@
 clear;
 close all;
+
+%% Setup environment
+[scripts_dir, ~, ~] = fileparts(pwd);
+[root_dir, ~, ~] = fileparts(scripts_dir);
+setup_script = fullfile(root_dir,'utils','setup_environment.m');
+run(setup_script);
+
 %% Implement a clustering analysis to extract average heartbeat profiles
-%% This should be done across patients, across sensors, across channels
+rng(1); % for reproducibility of clustering results
+%% Path to the dataset goes here
+data_dir = "C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\";
+save_dir = data_dir;
+%% Parameters
 use_filters = 1;
+plot_tsne = 0;
+plot_cluster_profiles = 0;
 manually_cleaned = 1;
-if manually_cleaned
-    if use_filters
-        data = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\manually_cleaned_heartbeat_profiles_MA.mat");
-    else
-        data = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\manually_cleaned_heartbeat_profiles_no_filters.mat");
-    end
-else    
-    if use_filters
-        data = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\heartbeat_profiles_MA.mat");
-    else
-        data = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\heartbeat_profiles_no_filters.mat");
-    end
-end
-fs = 200;
-profiles = data.profiling_struct;
 num_clusters_multiplier = 1; %number of clusters will be the number of participants times this
 leads = 3;
 sensors = ["AgCl","HG"];
 sensors_num = 2;
-rng(1); % for reproducibility
+fs = 200;
+
+if manually_cleaned
+    if use_filters
+        data = load(fullfile(data_dir,"manually_cleaned_heartbeat_profiles_MA.mat"));
+    else
+        data = load(fullfile(data_dir,"manually_cleaned_heartbeat_profiles_no_filters.mat"));
+    end
+else    
+    if use_filters
+        data = load(fullfile(data_dir,"heartbeat_profiles_MA.mat"));
+    else
+        data = load(fullfile(data_dir,"heartbeat_profiles_no_filters.mat"));
+    end
+end
+
+profiles = data.profiling_struct;
 
 %% Take all channels, sensors of all participants, cluster them into N_sensors*N_channels clusters
-%Gather all data, assign labels according to channel-sensor
-
 channel_mapping = ["Lead1","Lead2","Lead3"];
 for s = 1:sensors_num
     channel = [];
@@ -43,7 +55,6 @@ for s = 1:sensors_num
                 labels = [labels; ch*ones(size(signal,2),1)];
             end
         end   
-        %centroids.(sensors(s)).(['ch',num2str(ch)]).direct_centroid_waveform = mean(channel,2);
     end
 
     channel = channel';
@@ -57,7 +68,6 @@ for s = 1:sensors_num
     reduced_data_99 = score(:,1:num_components);
 
     num_clusters = leads*num_clusters_multiplier;
-    %[idx_kmeans_pca,centroids_kmeans_pca] = kmeans(reduced_data_99,num_clusters,'MaxIter',1000); %'Replicates',5,'Start','cluster','MaxIter',1000,'Distance','sqeuclidean');
     [idx_kmeans_pca,centroids_kmeans_pca] = kmeans(reduced_data_99,num_clusters,'Replicates',5,'Start','cluster','MaxIter',1000,'Distance','sqeuclidean');
     reduced_data_with_centroids = [reduced_data_99; centroids_kmeans_pca];
 
@@ -79,27 +89,25 @@ for s = 1:sensors_num
     fprintf('%s Unsupervised Channel Identification Macro-F1 (K-Means): %.2f%%\n', sensors(s), macro_f1_kmeans * 100);
     fprintf('%s Unsupervised Channel Identification Micro-F1 (K-Means): %.2f%%\n', sensors(s), micro_f1_kmeans * 100);
 
-%     channel_identification.(sensors(s)).acc = acc_kmeans;
-%     channel_identification.(sensors(s)).macro_f1 = macro_f1_kmeans;
-%     channel_identification.(sensors(s)).micro_f1 = micro_f1_kmeans;
     %% Visualize with colored clusters
+    if plot_tsne
+        figure;
+        subplot(1,2,1);
+        gscatter(tsne_data(:,1), tsne_data(:,2), labels);
+        title('Ground Truth - TSNE manifold');
+        xlabel('t-SNE 1'); ylabel('t-SNE 2');
 
-    figure;
-    subplot(1,2,1);
-    gscatter(tsne_data(:,1), tsne_data(:,2), labels);
-    title('Ground Truth - TSNE manifold');
-    xlabel('t-SNE 1'); ylabel('t-SNE 2');
-
-    subplot(1,2,2);
-    gscatter(tsne_data(:,1), tsne_data(:,2), idx_kmeans_pca);
-    hold on; scatter(tsne_centroids(:,1), tsne_centroids(:,2), 100, 'kx', 'LineWidth', 2);
-    title('K-Means Clustering on PCA projection - TSNE manifold');
-    xlabel('t-SNE 1'); ylabel('t-SNE 2');
-    %lgd = findobj('type','legend');
-    %delete(lgd)
-    %legend(['Accuracy: ' sprintf('%.2f%%', acc_kmeans * 100)], 'Location', 'northeast');
-    suptitle = [char(sensors(s)) ' - Channel Identification - Macro F1: ' sprintf('%.2f%%', macro_f1_kmeans * 100) ' / Accuracy: ' sprintf('%.2f%%', acc_kmeans * 100)];
-    sgtitle(suptitle)
+        subplot(1,2,2);
+        gscatter(tsne_data(:,1), tsne_data(:,2), idx_kmeans_pca);
+        hold on; scatter(tsne_centroids(:,1), tsne_centroids(:,2), 100, 'kx', 'LineWidth', 2);
+        title('K-Means Clustering on PCA projection - TSNE manifold');
+        xlabel('t-SNE 1'); ylabel('t-SNE 2');
+        lgd = findobj('type','legend');
+        delete(lgd)
+        legend(['Accuracy: ' sprintf('%.2f%%', acc_kmeans * 100)], 'Location', 'northeast');
+        suptitle = [char(sensors(s)) ' - Channel Identification - Macro F1: ' sprintf('%.2f%%', macro_f1_kmeans * 100) ' / Accuracy: ' sprintf('%.2f%%', acc_kmeans * 100)];
+        sgtitle(suptitle)
+    end
     
     %% Store TSNE data used in plots for further processing
     tsne_vis.(sensors(s)).projection = tsne_data;
@@ -113,37 +121,37 @@ end
 
 %% Visualize channel profiles
 %Cluster profiles
-plot_count = 1;
-figure;
-global_min = 10000000;
-global_max = -10000000;
-for s = 1:2
-    for ch = 1:3
-        cluster_profile = centroids.(sensors(s)).(['ch',num2str(ch)]).kmeans_cluster_mapped_waveform;
-        %subplot(length(plot_participants),6,plot_count)
-        subplot(1,6,plot_count)
-        plot(cluster_profile,'k','LineWidth',1.5)
-        xlabel((['ch',num2str(ch)])); %
-        if ch == 2
-            title(sensors(s))
+
+if plot_cluster_profiles
+    plot_count = 1;
+    figure;
+    global_min = 10000000;
+    global_max = -10000000;
+    for s = 1:2
+        for ch = 1:3
+            cluster_profile = centroids.(sensors(s)).(['ch',num2str(ch)]).kmeans_cluster_mapped_waveform;
+            subplot(1,6,plot_count)
+            plot(cluster_profile,'k','LineWidth',1.5)
+            xlabel((['ch',num2str(ch)])); %
+            if ch == 2
+                title(sensors(s))
+            end
+            if min(cluster_profile) < global_min
+                global_min = min(cluster_profile);
+            end
+            if max(cluster_profile) > global_max
+                global_max = max(cluster_profile);
+            end
+
+            plot_count = plot_count + 1;
+            features.(sensors(s)).(['ch',num2str(ch)]) = extract_ecg_heartbeat_features(cluster_profile, fs);
         end
-        if min(cluster_profile) < global_min
-            global_min = min(cluster_profile);
-        end
-        if max(cluster_profile) > global_max
-            global_max = max(cluster_profile);
-        end
-        %subplot(length(plot_participants),6,plot_count)
-        %subplot(1,6,plot_count)
-        plot_count = plot_count + 1;
-        features.(sensors(s)).(['ch',num2str(ch)]) = extract_ecg_heartbeat_features(cluster_profile, fs);
+    end
+    for i = 1:6
+        subplot(1,6,i)
+        ylim([global_min,global_max])
     end
 end
-for i = 1:6
-    subplot(1,6,i)
-    ylim([global_min,global_max])
-end
-
 %% Calculate inter-sensor metrics for every channel
 
 for ch = 1:3
@@ -157,10 +165,11 @@ for ch = 1:3
     xcorr.(['ch',num2str(ch)]) = xcorr_cluster;
     mse.(['ch',num2str(ch)]) = mse_cluster;
 end
+
+%% Save results and data for further processing
 if manually_cleaned
-    save("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\manually_cleaned_channel_id_results.mat","centroids","features","tsne_vis","xcorr","mse");
+    save(fullfile(save_dir,"manually_cleaned_channel_id_results.mat","centroids","features","tsne_vis","xcorr","mse"));
 else
-    save("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\channel_id_results.mat","centroids","features","tsne_vis","xcorr","mse");
+    save(fullfile(save_dir,"channel_id_results.mat","centroids","features","tsne_vis","xcorr","mse"));
 end
-%sgtitle('Centroid Profiles obtained from Clustering Analysis for 4 participants')
 

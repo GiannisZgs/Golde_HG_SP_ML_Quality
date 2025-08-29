@@ -1,38 +1,45 @@
 clear;
 close all;
-% Search windows around R-peak (in milliseconds)
-% These define the regions where the function will look for P and T waves.
-% Adjusting these can significantly impact detection accuracy.
-p_search_window_ms = 250; % Max time before R-peak to look for P-wave
-t_search_window_ms = 350; % Max time after R-peak to look for T-wave
-calcMetrics = 0; %boolean to control metric calculation
-%% Tune this up_percentile
+%% Setup environment
+[scripts_dir, ~, ~] = fileparts(pwd);
+[root_dir, ~, ~] = fileparts(scripts_dir);
+setup_script = fullfile(root_dir,'utils','setup_environment.m');
+run(setup_script);
 
-up_percentile = 95;
-bottom_percentile = 1;
+%% Data loading dir
+data_dir = 'C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\';
+results_dir = data_dir;
 use_filters = 1;
 manually_cleaned = 0;
+calcMetrics = 1; %boolean to control metric calculation
+%% Parameters
+p_search_window_ms = 250; % Max time before R-peak to look for P-wave
+t_search_window_ms = 350; % Max time after R-peak to look for T-wave
+up_percentile = 95; % these percentiles control the outlier removal
+bottom_percentile = 1;
+
 if manually_cleaned
     if use_filters
-        data = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\ECG_HG_manually_cleaned_quality_dataset_MA.mat");
+        data = load(fullfile(data_dir,"ECG_HG_manually_cleaned_quality_dataset_MA.mat"));
     else
-        data = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\ECG_HG_manually_cleaned_quality_dataset_no_filters.mat");
+        data = load(fullfile(data_dir,"ECG_HG_manually_cleaned_quality_dataset_no_filters.mat"));
     end
     data.data_struct = data.new_data_struct;
 else
     if use_filters
-        data = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\ECG_HG_quality_dataset_MA.mat");
+        data = load(fullfile(data_dir,"ECG_HG_quality_dataset_MA.mat"));
     else
-        data = load("C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\ECG_HG_quality_dataset_no_filters.mat");
+        data = load(fullfile(data_dir,"ECG_HG_quality_dataset_no_filters.mat"));
     end
 end
+
 try
     fs = data.data_struct.fs_ecg;
 catch
     fprintf('Fs not found in data_struct \n')
     fs = 200;
 end
-p_search_window = (p_search_window_ms/1000)*fs;
+p_search_window = (p_search_window_ms/1000)*fs; %from msec to sec
 t_search_window = (t_search_window_ms/1000)*fs;
 
 
@@ -126,7 +133,7 @@ for f = 1:length(struct_fields)
             continue
         end
         %% Outlier detection
-        %Exclude top5 and bottom5 percentiles
+        %Exclude top and bottom percentiles
         variance_heartbeats = var(heartbeats);
         var_sorted = sort(variance_heartbeats);
         lower_thres = prctile(var_sorted,bottom_percentile);
@@ -135,24 +142,7 @@ for f = 1:length(struct_fields)
         heartbeats = heartbeats(:,inds_to_keep);
         agcl_segmented_beats.(['ch',num2str(ch)]) = heartbeats;
     end      
-    
-%     if ~any(isnan(agcl_segmented_beats.ch1))
-%         figure;
-%         plot(agcl_segmented_beats.ch1)
-%         title('AgCl Channel 1 Heartbeat Profile')
-%     end
-%     
-%     if ~any(isnan(agcl_segmented_beats.ch2))
-%         figure;
-%         plot(agcl_segmented_beats.ch2)
-%         title('AgCl Channel 2 Heartbeat Profile')
-%     end
-%     
-%     if ~any(isnan(agcl_segmented_beats.ch3))
-%         figure;
-%         plot(agcl_segmented_beats.ch3)
-%         title('AgCl Channel 3 Heartbeat Profile')
-%     end    
+     
     
     %% Hydrogel
     hg_segmented_beats = struct();
@@ -216,7 +206,7 @@ for f = 1:length(struct_fields)
             continue
         end
         %% Outlier detection
-        %Exclude top5 and bottom5 percentiles
+        %Exclude top and bottom percentiles
         variance_heartbeats = var(heartbeats);
         var_sorted = sort(variance_heartbeats);
         lower_thres = prctile(var_sorted,bottom_percentile);
@@ -245,12 +235,7 @@ for f = 1:length(struct_fields)
         plot(hg_segmented_beats.ch3)
         title('HG Channel 3 Heartbeat Profile')
     end
-    
-    %plot(agcl_ecg_segment)
-    %hold on
-    %plot(agcl_qrs_segment,agcl_ecg_segment(agcl_qrs_segment),'ok');
-    %plot(hg_ecg_segment)
-    %plot(hg_qrs_segment,hg_ecg_segment(hg_qrs_segment),'og');
+   
     
     %% Save heartbeat profiles for post-processing
     profiling_struct.(fieldd).HG = hg_segmented_beats;
@@ -398,33 +383,22 @@ for f = 1:length(struct_fields)
                 SigQual.Compress.(struct_fields{f}).HG.(['ch',num2str(ch)]) = [];
             end
         end
-        %avg_corr_ch1 = mean(reshape(CorrMat_ch1,1,size(CorrMat_ch1,1)*size(CorrMat_ch1,2)));
-        %std_corr_ch1 = std(reshape(CorrMat_ch1,1,size(CorrMat_ch1,1)*size(CorrMat_ch1,2)));
-        %avg_corr_ch1_hg = mean(CorrMat_ch1_HG(find(CorrMat_ch1_HG~=0)));
-        %std_corr_ch1_hg = std(CorrMat_ch1_HG(find(CorrMat_ch1_HG~=0)));    
-        %avg_mse_ch1 = mean(reshape(MSE_mat_ch1,1,size(MSE_mat_ch1,1)*size(MSE_mat_ch1,2)));
-        %std_mse_ch1 = std(reshape(MSE_mat_ch1,1,size(MSE_mat_ch1,1)*size(MSE_mat_ch1,2)));
-        %avg_nrmse_ch1 = mean(reshape(NRMSE_mat_ch1,1,size(NRMSE_mat_ch1,1)*size(NRMSE_mat_ch1,2)));
-        %std_nrmse_ch1 = std(reshape(NRMSE_mat_ch1,1,size(NRMSE_mat_ch1,1)*size(NRMSE_mat_ch1,2)));              
-        %avg_cos_ch1 = mean(reshape(Cos_mat_ch1,1,size(Cos_mat_ch1,1)*size(Cos_mat_ch1,2)));
-        %std_cos_ch1 = std(reshape(Cos_mat_ch1,1,size(Cos_mat_ch1,1)*size(Cos_mat_ch1,2)));
     end
     fprintf("Finished results extraction of subject %s \n",struct_fields{f}) 
 end
-%save('C:\Users\giann\OneDrive\Desktop\ECG HG paper\similarity_analysis_results.mat','CorrMat','NrmseMat','CosMat','JsdMat','EmdMat','SigQual','-v7.3');
 
 %% Save profiles for further analysis in MATLAB
 if manually_cleaned
     if use_filters
-        save('C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\manually_cleaned_heartbeat_profiles_MA.mat','profiling_struct')
+        save(fullfile(results_dir,'manually_cleaned_heartbeat_profiles_MA.mat'),'profiling_struct')
     else
-        save('C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\manually_cleaned_heartbeat_profiles_no_filters.mat','profiling_struct')
+        save(fullfile(results_dir,'manually_cleaned_heartbeat_profiles_no_filters.mat'),'profiling_struct')
     end
 else 
     if use_filters
-        save('C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\heartbeat_profiles_MA.mat','profiling_struct')
+        save(fullfile(results_dir,'heartbeat_profiles_MA.mat'),'profiling_struct')
     else
-        save('C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\heartbeat_profiles_no_filters.mat','profiling_struct')
+        save(fullfile(results_dir,'heartbeat_profiles_no_filters.mat'),'profiling_struct')
     end
 end
 %% Save results for processing in R
@@ -437,7 +411,7 @@ if calcMetrics
     results_struct.SigQual = SigQual;
 
     jsonStr = jsonencode(results_struct);
-    fid = fopen('C:\Users\giann\OneDrive\Desktop\ECG HG paper\results_data\similarity_analysis_results.json','w');
+    fid = fopen(fullfile(results_dir,'similarity_analysis_results.json'),'w');
     fwrite(fid,jsonStr,'char');
     fclose(fid);
 end
