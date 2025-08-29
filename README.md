@@ -1,1 +1,2 @@
-# HG_sensor_quality_analysis
+# Systematic Benchmarking of a Noise-tolerant Conductive Hydrogel electrode for Epidermal Bioelectronics
+
