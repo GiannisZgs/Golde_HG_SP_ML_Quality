@@ -1,6 +1,6 @@
 # Systematic Benchmarking of a Noise-tolerant Conductive Hydrogel electrode for Epidermal Bioelectronics
 
-This repository contains the codebase for analyzing and comparing ECG signals recorded with conventional AgCl electrodes and polymer-printed hydrogel (PPHG) electrodes. The analysis pipeline processes raw ECG data, extracts features, performs clustering analysis, and generates visualizations for quality comparison. Additionally, the comparison is extended to other biosignals modalities, EEG, EMG and EOG.
+This repository contains the codebase for analyzing and comparing ECG signals recorded with conventional AgCl electrodes and polymer-printed hydrogel (PPHG) electrodes, for the paper "Systematic Benchmarking of a Noise-tolerant Conductive Hydrogel electrode for Epidermal Bioelectronics". The analysis pipeline processes raw ECG data, extracts features, performs clustering analysis, and generates visualizations for quality comparison. Additionally, the comparison is extended to other biosignals modalities, EEG, EMG and EOG.
 
 ## Repository Structure
 
