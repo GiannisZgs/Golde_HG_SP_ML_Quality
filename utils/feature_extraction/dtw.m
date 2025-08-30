@@ -1,5 +1,8 @@
 %% Dynamic Time Warping calculation
 function dist = dtw(x, y)
+    % Calculates Dynamic Time Warping distance between two time series
+    % Uses normalized signals for improved comparison
+    
     [~, dist] = dtw_c(x, y);
 end
 

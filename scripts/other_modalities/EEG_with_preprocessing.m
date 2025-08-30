@@ -1,3 +1,8 @@
+%% EEG Analysis With Preprocessing Pipeline
+% Processes raw EEG data with bandpass filtering and artifact removal
+% Calculates and visualizes frequency domain features and time-frequency representations
+% Analyzes spectral power differences between cognitive task conditions
+
 %% Combined EEG Analysis Script with PSD Comparison Plot
 
 %% User Inputs

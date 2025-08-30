@@ -1,3 +1,9 @@
+#
+# Overview of AgCl and HG Sensors Performance 
+# Processes participant and channel identification results 
+# Extracts MSE, correlation, and feature data across sensor types
+# Generates a comparative circular barplot chart of all metrics used across the analysis
+
 library(jsonlite)
 library(ggplot2)
 library(dplyr)
@@ -10,11 +16,11 @@ library(RColorBrewer)
 library(cowplot)
 
 # Load data
-data_path <- "/home/giannis/Documents/ECG HG paper/results_data/participant_id_results.json"
-data <- fromJSON(txt = data_path, simplifyVector = FALSE)
+data_dir <- "/home/giannis/Documents/ECG HG paper/results_data"
+data <- fromJSON(txt = file.path(data_dir, "participant_id_results.json"), simplifyVector = FALSE)
 
-participant_id_path <- "/home/giannis/Documents/ECG HG paper/results_data/participant_id_results.json"
-channel_id_path <- "/home/giannis/Documents/ECG HG paper/results_data/channel_id_results.json"
+participant_id_path <- file.path(data_dir, "participant_id_results.json")
+channel_id_path <- file.path(data_dir, "channel_id_results.json")
 
 # Load participant identification data
 participant_id_data <- fromJSON(txt = participant_id_path, simplifyVector = FALSE)
@@ -23,7 +29,7 @@ participant_id_data <- fromJSON(txt = participant_id_path, simplifyVector = FALS
 channel_id_data <- fromJSON(txt = channel_id_path, simplifyVector = FALSE)
 
 # Create output directory
-output_dir <- "R_figures/figure_2f/"
+output_dir <- file.path("..","imgs_figures", "figure_5e")
 if (!dir.exists(output_dir)) {
   dir.create(output_dir, recursive = TRUE)
 }
@@ -781,5 +787,5 @@ combined_plot <- cowplot::plot_grid(
 )
 
 # Save the combined plot
-#ggsave(paste0(output_dir, "combined_circular_barplots.png"), combined_plot, 
-#       width = 18, height = 12, dpi = 300, bg = "white")
+ggsave(paste0(output_dir, "combined_circular_barplots.png"), combined_plot, 
+       width = 18, height = 12, dpi = 300, bg = "white")

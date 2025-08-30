@@ -1,3 +1,9 @@
+#
+# ECG Channel Clustering Visualization
+# Creates t-SNE plots comparing ground truth vs. K-means channel clustering
+# Visualizes cluster-to-lead correspondence with waveform bubbles
+# Calculates and displays accuracy and F1 score metrics
+
 library(jsonlite)
 library(ggplot2)
 library(dplyr)
@@ -9,13 +15,13 @@ library(cowplot)
 library(ggrepel)
 library(RColorBrewer)
 
-data_path <- "/home/giannis/Documents/ECG HG paper/results_data/channel_id_results.json"
-data <- fromJSON(txt = data_path, simplifyVector = FALSE)
+data_dir <- "/home/giannis/Documents/ECG HG paper/results_data"
+data <- fromJSON(txt = file.path(data_dir, "channel_id_results.json"), simplifyVector = FALSE)
 fs <- 200
 sensors <- c("AgCl", "HG")
 
 # Create output directory
-output_dir <- paste0("R_figures/figure_2c/")
+output_dir <- file.path("..", "imgs_figures", "figure_5b_S10")
 if (!dir.exists(output_dir)) {
   dir.create(output_dir, recursive = TRUE)
 }

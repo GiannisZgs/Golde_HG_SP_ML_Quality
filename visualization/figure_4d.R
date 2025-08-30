@@ -1,3 +1,9 @@
+#
+# ECG Feature Annotation Visualization
+# Creates annotated ECG waveform plots with key features highlighted
+# Compares P-wave, T-wave, and peak-to-peak amplitude between electrode types
+# Generates shaded ECG visualizations with measurement arrows and labels
+
 library(jsonlite)
 library(ggplot2)
 library(dplyr)
@@ -9,15 +15,15 @@ library(grid)
 library(cowplot)
 library(ggrepel)
 
-
-data <- fromJSON(txt = "/home/giannis/Documents/ECG HG paper/results_data/manually_cleaned_participant_id_results.json", simplifyVector = FALSE)
+data_dir = "/home/giannis/Documents/ECG HG paper/results_data" #your data_dir here
+data <- fromJSON(txt = file.path(data_dir,"manually_cleaned_participant_id_results.json"), simplifyVector = FALSE)
 
 fs <- 200
 selected_participants <- c("p1","p5","p10","p39")
 selected_channels <- c("ch1", "ch2","ch3")
 
 # Create output directory if it doesn't exist
-output_dir <- paste0("R_figures/figure_1d/")
+output_dir <- file.path("..", "imgs_figures", "figure_4d")
 if (!dir.exists(output_dir)) {
   dir.create(output_dir, recursive = TRUE)
 }

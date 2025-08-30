@@ -1,4 +1,6 @@
 function features = extract_ecg_heartbeat_features(beat, fs)
+    % Extracts clinically relevant ECG waveform features
+    % Identifies P, Q, R, S, T points and measures intervals and amplitudes
 
     beat = beat(:);
     L = length(beat);

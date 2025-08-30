@@ -1,4 +1,6 @@
 function plot_pantompkins_qrs_detection(testdata,filt_dat,int_dat,qrs_pos,thF1,thI1,fs)
+    % Visualizes results of Pan-Tompkins QRS detection algorithm
+    
     figure();
     L = 10000;
     t = (0:L-1) / fs;

@@ -1,3 +1,9 @@
+#
+# Participant Clustering Visualization
+# Creates t-SNE plots for participant identification via ECG clustering
+# Displays ground truth vs. clustering results with performance metrics
+# Generates profile visualizations for selected participants
+
 library(jsonlite)
 library(ggplot2)
 library(dplyr)
@@ -9,13 +15,13 @@ library(cowplot)
 library(ggrepel)
 library(RColorBrewer)
 
-data_path <- "/home/giannis/Documents/ECG HG paper/results_data/participant_id_results.json"
-data <- fromJSON(txt = data_path, simplifyVector = FALSE)
+data_dir <- "/home/giannis/Documents/ECG HG paper/results_data"
+data <- fromJSON(txt = file.path(data_dir, "participant_id_results.json"), simplifyVector = FALSE)
 fs <- 200
 sensors <- c("AgCl", "HG")
 
 # Create output directory
-output_dir <- paste0("R_figures/figure_2b/")
+output_dir <- file.path("..", "imgs_figures", "figure_5c_S11")
 if (!dir.exists(output_dir)) {
   dir.create(output_dir, recursive = TRUE)
 }
@@ -446,10 +452,6 @@ cat("Individual t-SNE plots saved to:", output_dir, "\n")
 
 profile_vis <- create_profile_cluster_visualization(data, profile_sensor, profile_channel, selected_participants_profiles)
 profile_file <- paste0(output_dir, "participant_profiles_", ifelse(profile_sensor == "HG", "PPHG", profile_sensor), "_Lead_", substr(profile_channel, 3, 3), ".png")
-
-# Set a reasonable height based on number of participants
-#plot_height <- 20 + (length(selected_participants_profiles) - 5) * 3  # Base height 16, +2 for each participant over 5
-#plot_height <- max(16, min(30, plot_height))  # Constrain between 16 and 30 inches
 
 ggsave(profile_file, profile_vis, width = 24, height = 18, dpi = 300, bg = "white", limitsize = FALSE)
 cat("Profile visualization saved to:", profile_file, "\n")

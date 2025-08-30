@@ -1,3 +1,9 @@
+#
+# ECG Similarity Metric Visualization
+# Extracts and plots MSE, cross-correlation, and feature metrics
+# Compares performance between AgCl and PPHG electrodes across leads
+# Creates boxplots, violin plots, and beeswarm visualizations
+
 library(jsonlite)
 library(ggplot2)
 library(dplyr)
@@ -11,11 +17,11 @@ library(viridis)
 library(ggbeeswarm)
 
 # Load data
-data_path <- "/home/giannis/Documents/ECG HG paper/results_data/participant_id_results.json"
-data <- fromJSON(txt = data_path, simplifyVector = FALSE)
+data_dir <- "/home/giannis/Documents/ECG HG paper/results_data"
+data <- fromJSON(txt = file.path(data_dir, "participant_id_results.json"), simplifyVector = FALSE)
 
 # Create output directory
-output_dir <- "R_figures/figures_2d_e/"
+output_dir <- file.path("..", "imgs_figures", "figure_5d_S12")
 if (!dir.exists(output_dir)) {
   dir.create(output_dir, recursive = TRUE)
 }

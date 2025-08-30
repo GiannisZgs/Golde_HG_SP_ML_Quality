@@ -1,6 +1,11 @@
 function [M,varargout] = batch_inter_sensor_metrics(beat1, beat2, metric,varargin)
-% beat1 and beat2 should be batches of beats of the same length    
-% beat1: [L x N1], beat2: [L x N2]
+    % Calculates similarity metrics between heartbeats from different sensor types
+    % Supports multiple distance/similarity measures for comparing signals
+    % Used for benchmarking performance between AgCl and hydrogel electrodes
+    
+    % beat1 and beat2 should be batches of beats of the same length    
+    % beat1: [L x N1], beat2: [L x N2]
+    
     [L1, N1] = size(beat1);
     [L2, N2] = size(beat2);
 

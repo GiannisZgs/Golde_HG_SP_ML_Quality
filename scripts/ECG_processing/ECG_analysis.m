@@ -1,3 +1,9 @@
+%% ECG Quality Analysis Framework
+% Performs comprehensive quality assessment of ECG signals from multiple sources
+% Segments heartbeats, removes outliers, and calculates similarity metrics
+% Yields heartbeat profiles 
+% Evaluates and compares the performance of AgCl vs hydrogel electrodes
+
 clear;
 close all;
 %% Setup environment

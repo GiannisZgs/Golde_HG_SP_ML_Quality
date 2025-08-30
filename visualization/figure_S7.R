@@ -1,3 +1,9 @@
+#
+# Power Spectral Density Visualization
+# Creates comparative PSD plots between sensors (inter-sensor) or between raw/processed signals (intra-sensor)
+# Generates main PSD overview and detailed band-specific visualizations
+# Supports customizable frequency bands and layout with multi-panel presentation options
+
 library(jsonlite)
 library(ggplot2)
 library(dplyr)
@@ -10,6 +16,7 @@ library(cowplot)
 library(ggrepel)
 library(viridis)
 
+data_dir <- '/home/giannis/Documents/ECG HG paper/results_data' #your data_dir here
 fs <- 200
 participant <- "p10" #c("p1","p5","p10","p39")
 sensor1 <- "AgCl"
@@ -18,17 +25,28 @@ same_sensor <- "HG1" #used if plot_type is "intra_sensor"
 plot_type <- "intra_sensor"
 channel <- "channel_1"
 bands_to_use <- "all"  # Can be "all" or a subset like c("low", "high")
+#available bands are:
+#        'trend',        [0.0 0.3];    
+#        'vlf',          [0.05 0.5];
+#        'low',          [0.5 5];
+#        'mid',          [5 15];
+#        'high',         [15 40];
+#        'powerline',    [48 52];
+#        'powerline_harmonic', [78,82];
+#        'ultra_high1',   [52 78];
+#        'ultra_high2',   [82 fs/2];
 
 # Load the PSD data
 if (plot_type == "inter_sensor") {
-    data_path <- paste0("/home/giannis/Documents/ECG HG paper/results_data/manually_cleaned_power_spectral_density_diff_sensor_data/PSD_", participant, "_", sensor1, "-", sensor2, ".json")
+    data_path <- file.path(data_dir,paste0("manually_cleaned_power_spectral_density_diff_sensor_data/PSD_", participant, "_", sensor1, "-", sensor2, ".json"))
 } else {
-    data_path <- paste0("/home/giannis/Documents/ECG HG paper/results_data/manually_cleaned_power_spectral_density_same_sensor_data/PSD_", participant, "_", same_sensor, ".json")
+    data_path <- file.path(data_dir,paste0("manually_cleaned_power_spectral_density_same_sensor_data/PSD_", participant, "_", same_sensor, ".json"))
 }
 data <- fromJSON(txt = data_path, simplifyVector = FALSE)
 
 # Create output directory if it doesn't exist
-output_dir <- paste0("R_figures/figure_1e_no_axes/",participant, "/", channel, "/", plot_type)
+output_dir <- file.path("..", "imgs_figures", "figure_S7_no_axes", participant, channel, plot_type)
+
 if (!dir.exists(output_dir)) {
   dir.create(output_dir, recursive = TRUE)
 }

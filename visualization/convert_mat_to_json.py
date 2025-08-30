@@ -1,3 +1,6 @@
+"""
+Converts a MATLAB .mat file with nested structures to a JSON file.
+"""
 import scipy.io
 import json
 import numpy as np

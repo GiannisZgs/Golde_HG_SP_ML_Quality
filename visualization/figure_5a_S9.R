@@ -1,3 +1,8 @@
+#
+# ECG Waveform Overlay Visualization
+# Creates faceted plots comparing ECG waveforms across electrode types and leads
+# Generates aggregated, raw, and single-participant visualizations
+
 library(jsonlite)
 library(ggplot2)
 library(dplyr)
@@ -10,15 +15,15 @@ library(cowplot)
 library(ggrepel)
 
 nans_removed = TRUE #true if processing has already been done
-data_path <- "/home/giannis/Documents/ECG HG paper/results_data/heartbeat_profiles_MA.json"
+data_dir <- "/home/giannis/Documents/ECG HG paper/results_data" 
 single_participant <- "p39"
 
 if (nans_removed) {
-  data <- fromJSON(txt = data_path, simplifyVector = FALSE)
+  data <- fromJSON(txt = file.path(data_dir, "heartbeat_profiles_MA.json"), simplifyVector = FALSE)
 
 } else {
-  
-  json_text <- readLines(data_path)
+
+  json_text <- readLines(file.path(data_dir, "heartbeat_profiles_MA.json"))
 
   # Replace all occurrences of NaN with null
   json_text <- gsub("\\bNaN\\b", "null", json_text)
@@ -28,10 +33,10 @@ if (nans_removed) {
 
   cleaned_json <- toJSON(data, pretty = TRUE, auto_unbox = TRUE)
 
-  # Write the JSON to a file
-  write(cleaned_json, file = data_path)
+  # Overwrite the JSON file
+  write(cleaned_json, file = file.path(data_dir, "heartbeat_profiles_MA.json"))
 
-  print(paste("Cleaned data saved to:", data_path))
+  print(paste("Cleaned data saved to:", file.path(data_dir, "heartbeat_profiles_MA.json")))
 }
 
 fs <- 200
@@ -40,7 +45,7 @@ channels <- c("ch1", "ch2", "ch3")
 sensors <- c("AgCl", "HG")
 
 # Create output directory if it doesn't exist
-output_dir <- paste0("R_figures/figure_2a/")
+output_dir <- file.path("..", "imgs_figures", "figure_5a_S9")
 if (!dir.exists(output_dir)) {
   dir.create(output_dir, recursive = TRUE)
 }

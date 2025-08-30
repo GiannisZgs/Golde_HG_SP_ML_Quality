@@ -1,4 +1,6 @@
 function ecg_detrended = detrend_ecg_highpass(ecg_data, fs, cutoff, order)
+    % Removes baseline wander from ECG signals using a high-pass Butterworth filter
+    % Applies filtfilt for zero-phase filtering across all channels
 
     % High-pass filter parameters
     [b, a] = butter(order, cutoff / (fs / 2), 'high');

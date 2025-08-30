@@ -1,3 +1,8 @@
+%% ECG Channel Clustering Analysis
+% Performs unsupervised clustering to identify distinct ECG channel patterns
+% Uses dimensionality reduction and K-means to classify lead positions
+% Evaluates clustering performance using accuracy and F1 scores
+
 clear;
 close all;
 

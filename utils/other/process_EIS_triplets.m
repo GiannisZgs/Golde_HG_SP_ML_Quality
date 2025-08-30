@@ -1,4 +1,8 @@
 function process_EIS_triplets()
+    % Processes EIS triplicate measurements
+    % Calculates dielectric parameters including permittivity, modulus, and loss tangent
+    % Generates visualizations and exports data to Excel/ASCII format
+    
     % process_EIS_triplets: Dynamic EIS triplicate analysis for permittivity,
     % modulus, and loss tangent. Saves results to Excel/ASCII and plots subplots.
     clc; clear; close all;

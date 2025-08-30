@@ -1,3 +1,16 @@
+%% EMG Signal Processing and Visualization Pipeline
+% Loads, preprocesses and compares EMG signals from AgCl and hydrogel electrodes
+% Generates time-domain, frequency-domain, and time-frequency visualizations
+% Calculates and compares signal quality metrics between electrode types
+
+close all
+clear;
+%% Setup environment
+[scripts_dir, ~, ~] = fileparts(pwd);
+[root_dir, ~, ~] = fileparts(scripts_dir);
+setup_script = fullfile(root_dir,'utils','setup_environment.m');
+run(setup_script);
+
 emg_agcl_all = readtable("Folder1-AgCl_EMG_properchair,stand,quadupndwn,squat,walkcrclandstrt_Default_none.xlsx.xlsx");
 emg_hg_all = readtable("Folder1-PPHG EMG raw.xlsx");
 

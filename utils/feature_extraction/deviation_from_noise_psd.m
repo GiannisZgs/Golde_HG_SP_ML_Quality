@@ -1,4 +1,8 @@
 function metrics = deviation_from_noise_psd(ecg_raw, ecg_processed, fs, target_band, plot_flag,sensor,participant,same_sensor)
+% Quantifies noise reduction in different frequency bands after ECG preprocessing
+% Calculates power spectral density ratios between raw and processed signals
+% Generates visualization plots and saves data if enabled
+%
 % ecg_data: [samples × channels]
 % fs: sampling frequency in Hz
 % plot_flag: true/false for PSD plots

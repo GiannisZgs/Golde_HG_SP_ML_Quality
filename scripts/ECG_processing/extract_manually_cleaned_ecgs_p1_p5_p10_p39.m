@@ -1,3 +1,8 @@
+%% ECG Data Extraction From Manually Cleaned Recordings
+% Extracts and processes manually cleaned ECG data for participants 1, 5, 10, and 39
+% Applies various signal processing filters and quality assessment metrics
+% Compares AgCl and hydrogel electrodes for benchmarking performance
+
 close all
 clear;
 %% Setup environment

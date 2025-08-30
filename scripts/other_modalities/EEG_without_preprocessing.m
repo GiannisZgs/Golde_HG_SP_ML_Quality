@@ -1,3 +1,8 @@
+%% EEG Analysis Without Preprocessing Pipeline
+% Analyzes raw EEG data without filtering or artifact removal
+% Performs frequency domain analysis including PSD, spectrogram, and CWT
+% Evaluates delta band power differences between conditions (eyes open vs. closed)
+
 %% Combined EEG Analysis Script with PSD Comparison Plot
 
 %% User Inputs

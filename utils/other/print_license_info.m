@@ -1,4 +1,5 @@
 function print_license_info()
+    % Displays the license and copyright information for the project
 
     fprintf('  Golde Hydrogel Systematic Benchmarking Analysis - Copyright (C) 2025  Ioannis Ziogas  \n');
     fprintf('  Khalifa University of Science and Technology  \n');

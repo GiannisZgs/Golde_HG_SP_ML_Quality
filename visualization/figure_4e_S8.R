@@ -1,3 +1,9 @@
+#
+# ECG Noise Reduction Visualization
+# Plots frequency band power ratios between raw and processed signals
+# Compares noise reduction performance across electrode types and leads
+# Creates boxplots, violin plots, and beeswarm visualizations for multiple metrics
+
 library(jsonlite)
 library(ggplot2)
 library(dplyr)
@@ -11,15 +17,14 @@ library(ggrepel)
 library(viridis)
 library(ggbeeswarm)  
 
-"Plot for the whole dataset instead of cleaned to have more samples"
-
+data_dir = "/home/giannis/Documents/ECG HG paper/results_data"
 # Load data
 fs <- 200
-data_path <- paste0("/home/giannis/Documents/ECG HG paper/results_data/metrics_deviation_from_noise.json")
+data_path <- file.path(data_dir, "metrics_deviation_from_noise.json")
 data <- fromJSON(txt = data_path, simplifyVector = FALSE)
 
 # Create output directory
-output_dir <- "R_figures/figure_1f_bigger_fonts/"
+output_dir <- file.path("..", "imgs_figures", "figure_4e_S8")
 if (!dir.exists(output_dir)) {
   dir.create(output_dir, recursive = TRUE)
 }
@@ -284,7 +289,7 @@ print("Saved combined beeswarm plots")
 print("Creating and saving individual metric plots...")
 
 # Create a subdirectory for individual metric plots
-individual_dir <- paste0(output_dir, "individual_metrics/")
+individual_dir <- file.path(output_dir, "individual_metrics")
 if (!dir.exists(individual_dir)) {
   dir.create(individual_dir, recursive = TRUE)
 }

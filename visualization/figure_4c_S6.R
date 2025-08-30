@@ -1,3 +1,9 @@
+#
+# ECG Signal Processing Visualization
+# Plots raw and processed ECG signals with artifact highlighting
+# Creates zoomed bubble visualizations of selected signal segments
+# Used as an example to visually compare signal quality between AgCl and Hydrogel sensors
+
 library(jsonlite)
 library(ggplot2)
 library(dplyr)
@@ -17,6 +23,7 @@ if (use == "hg") {
     data_sensor <- readMat("agcl_p5.mat")
 }
 
+#Determine the position of the artifacts here for plotting the zoomed segment
 artifacts <- list(
   list(start = 4, end = 8, label = "Artifact 1", position = "right"),
   list(start = 17, end = 21, label = "Artifact 2", position = "right")
@@ -188,5 +195,5 @@ for (i in 1:length(artifacts)) {
 
 print(final_plot)
 
-ggsave(paste0("R_figures/figure_1c/",use,"_lead", lead_to_plot, "_with_enlarged_bubbles.png"), 
+ggsave(paste0("../imgs_figures/figure_4c_S6/",use,"_lead", lead_to_plot, "_with_enlarged_bubbles.png"), 
        final_plot, width = 8, height = 6, dpi = 300, bg = "white")

@@ -1,4 +1,8 @@
 function setup_environment()
+    % Sets up the MATLAB environment for the Golde Hydrogel project
+    % Adds all utility directories to the MATLAB path
+    % Ensures all required functions and data are accessible
+    
     %Get the repository root 
     [repo_root, ~, ~] = fileparts(pwd);
     

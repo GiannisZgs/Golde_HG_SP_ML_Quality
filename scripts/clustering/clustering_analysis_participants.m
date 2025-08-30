@@ -1,3 +1,8 @@
+%% Participant Clustering Analysis
+% Performs unsupervised clustering to identify distinct heartbeat profiles for each participant
+% Uses dimensionality reduction and t-SNE visualization to group participants
+% Evaluates clustering quality using accuracy and F1 scores
+
 clear;
 close all;
 

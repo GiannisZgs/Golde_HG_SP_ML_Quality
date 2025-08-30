@@ -1,4 +1,8 @@
 function [M,varargout] = batch_intra_sensor_metrics(beats,metric,varargin)
+    % Calculates similarity metrics between heartbeats from the same sensor type
+    % Supports cross-correlation, MSE, NRMSE, cosine similarity, JSD, DTW, and EMD
+    % Returns similarity matrix and optional additional outputs
+    
     % beat: [L x N], where L = length of each beat, N = number of beats
     [~, N] = size(beats);
 

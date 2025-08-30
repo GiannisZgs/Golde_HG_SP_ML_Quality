@@ -1,4 +1,8 @@
 function [H_w,H_s,ZCR1,ZCR2,SF,Compr] = waveform_quality_scores(beats)
+    % Calculates multiple ECG signal quality metrics
+    % Returns waveform entropy, spectral entropy, zero-crossing rates,
+    % spectral flatness, and compressibility measures
+    
     H_w = waveform_entropy(beats, 100);
     H_s = spectral_entropy(beats, 100);
     ZCR1 = zero_crossing_rate(beats);

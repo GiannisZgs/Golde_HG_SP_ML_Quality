@@ -1,4 +1,8 @@
-%% Full EOG Preprocessing + Peak Analysis + Statistics + Plots
+%% EOG Processing and Analysis Pipeline
+% Performs complete EOG signal preprocessing, peak detection, and statistical analysis
+% Includes bandpass filtering, noise removal, and activity-specific measurements
+% Generates visualizations and performs statistical comparisons between activities
+
 
 % User inputs
 raw_eog = amplitude_uV(7111:10289)'; % Replace with your actual raw EOG vector

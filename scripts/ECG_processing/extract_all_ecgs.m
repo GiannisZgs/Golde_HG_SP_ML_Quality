@@ -1,3 +1,8 @@
+%% Batch ECG Data Extraction
+% Extracts and processes ECG data from all available participants
+% Handles multiple electrode types (AgCl, HG) and applies quality filters
+% Calculates signal quality metrics and saves processed data for further analysis
+
 close all
 clear;
 %% Setup environment
