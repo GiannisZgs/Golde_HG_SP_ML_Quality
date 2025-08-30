@@ -155,5 +155,12 @@ run('EOG_with_preprocessing_and_analysis_complete_code 1.m')
 
 Processes raw EOG recordings by applying multiple cleaning steps (filtering, notch, baseline correction, detrending, wavelet denoising, median filtering). The cleaned data are segmented into defined activities (“look up”, “blink 3x”, “look down”), from which maximum, minimum, and peak-to-peak values are extracted. Statistical analysis includes one-way ANOVA with Tukey post-hoc tests, and visual outputs include preprocessing stage plots and bar graphs for amplitude comparisons. The results provided from this script were imported into OriginLab for plotting.
 
+### Relaxation Times Plot
+Handled by the #utils/process_EIS_triplets.m utility.
 
+```matlab
+run('utils/process_EIS_triplets.m')
+```
+
+Accepts 3 text( ASCII .txt) or Excel (.xlsx) files of the EIS triplicate raw measurements. It calculates dielectric parameters (permittivity, modulus, loss tangent) across frequencies using the relavant formulas, outputs mean ± SD values to Excel file with headers, and generates error-bar plots. The results provided from it about electrode dielectric behavior and relaxation times are imported into OriginLab for plotting.
 
