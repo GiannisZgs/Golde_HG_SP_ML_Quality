@@ -25,7 +25,7 @@ if (use == "hg") {
 
 #Determine the position of the artifacts here for plotting the zoomed segment
 artifacts <- list(
-  list(start = 4, end = 8, label = "Artifact 1", position = "right"),
+  list(start = 10, end = 14, label = "Artifact 1", position = "left"),
   list(start = 17, end = 21, label = "Artifact 2", position = "right")
 )
 #agcl 1st Art.: 4 8 
