@@ -14,13 +14,13 @@ library(scales)
 library(grid)
 library(cowplot)
 
-use <- "agcl"  
+use <- "hg"  
 lead_to_plot <- 1
 
 if (use == "hg") {
-    data_sensor <- readMat("hg_p5.mat")
+    data_sensor <- readMat("./data/hg_p5.mat")
 } else {
-    data_sensor <- readMat("agcl_p5.mat")
+    data_sensor <- readMat("./data/agcl_p5.mat")
 }
 
 #Determine the position of the artifacts here for plotting the zoomed segment
@@ -77,17 +77,20 @@ main_plot <- ggplot(ecg_data, aes(x = Time, y = Amplitude, color = Sensor)) +
     y = "Amplitude (\u00B5V)",
     color = ""
   ) +
-  theme_minimal_grid(font_size = 10) + 
+  theme_minimal() + 
   theme(
     axis.title = element_text(size = 30),
-    axis.text = element_text(size = 30),
+    axis.text = element_text(size = 30, color = "black"),
+    axis.line = element_line(color = "black", size = 1), 
+    axis.ticks = element_line(color = "black", size = 0.8),  
+    axis.ticks.length = unit(0.3, "cm"),  
     legend.position = "bottom",
     legend.title = element_text(size = 10),
     legend.text = element_text(size = 30),
     legend.key.width = unit(2, "cm"),
-    panel.grid.major = element_line(color = "gray90"),
-    panel.grid.minor = element_line(color = "gray95"),
-    panel.background = element_rect(fill = "white", color = NA),
+    panel.grid.major = element_line(color = "gray60"),  
+    panel.grid.minor = element_line(color = "gray80"),  
+    panel.background = element_rect(fill = "white", color = NA), 
     plot.background = element_rect(fill = "white", color = NA),
     plot.margin = margin(5, 10, 5, 10) 
   ) 
@@ -195,5 +198,5 @@ for (i in 1:length(artifacts)) {
 
 print(final_plot)
 
-ggsave(paste0("../imgs_figures/figure_4c_S6/",use,"_lead", lead_to_plot, "_with_enlarged_bubbles.png"), 
+ggsave(file.path("./imgs_figures","figure_4c_S6",paste0(use,"_lead", lead_to_plot, "_with_enlarged_bubbles.png")), 
        final_plot, width = 8, height = 6, dpi = 300, bg = "white")

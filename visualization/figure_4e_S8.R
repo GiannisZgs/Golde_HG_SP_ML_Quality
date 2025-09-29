@@ -17,14 +17,14 @@ library(ggrepel)
 library(viridis)
 library(ggbeeswarm)  
 
-data_dir = "/home/giannis/Documents/ECG HG paper/results_data"
+data_dir = "./data"
 # Load data
 fs <- 200
 data_path <- file.path(data_dir, "metrics_deviation_from_noise.json")
 data <- fromJSON(txt = data_path, simplifyVector = FALSE)
 
 # Create output directory
-output_dir <- file.path("..", "imgs_figures", "figure_4e_S8")
+output_dir <- file.path(".", "imgs_figures", "figure_4e_S8")
 if (!dir.exists(output_dir)) {
   dir.create(output_dir, recursive = TRUE)
 }
@@ -201,9 +201,12 @@ create_metric_plot <- function(data, metric_name, plot_type = "boxplot") {
     coord_cartesian(ylim = c(NA, 10)) +  # Add this line to cap y-axis at 10
     theme_minimal() +
     theme(
-      axis.text.x = element_text(angle = 45, hjust = 1, size = 31),
-      axis.text.y = element_text(size = 31),
+      axis.text.x = element_text(angle = 45, hjust = 1, size = 31, color = "black"),
+      axis.text.y = element_text(size = 31, color = "black"),
       axis.title = element_text(size = 31),
+      axis.line = element_line(color = "black", size = 1), 
+      axis.ticks = element_line(color = "black", size = 0.8),  
+      axis.ticks.length = unit(0.3, "cm"),  
       plot.title = element_text(size = 27, face = "bold"),
       legend.position = "none",
       panel.grid.minor = element_blank(),
@@ -321,9 +324,12 @@ for (metric in metrics) {
     ) +
     theme_minimal() +
     theme(
-      axis.text.x = element_text(angle = 45, hjust = 1, size = 30),
-      axis.text.y = element_text(size = 30),
-      axis.title = element_text(size = 30),
+      axis.text.x = element_text(angle = 45, hjust = 1, size = 30, color = "black"),
+      axis.text.y = element_text(size = 30, color = "black"),
+      axis.title = element_text(size = 31),
+      axis.line = element_line(color = "black", size = 1), 
+      axis.ticks = element_line(color = "black", size = 0.8),  
+      axis.ticks.length = unit(0.3, "cm"),  
       legend.position = "none",
       legend.title = element_text(size = 12),
       plot.title = element_text(size = 27),
@@ -352,9 +358,12 @@ for (metric in metrics) {
     ) +
     theme_minimal() +
     theme(
-      axis.text.x = element_text(angle = 45, hjust = 1, size = 31),
-      axis.text.y = element_text(size = 31),
+      axis.text.x = element_text(angle = 45, hjust = 1, size = 31, color = "black"),
+      axis.text.y = element_text(size = 31, color = "black"),
       axis.title = element_text(size = 31),
+      axis.line = element_line(color = "black", size = 1), 
+      axis.ticks = element_line(color = "black", size = 0.8),  
+      axis.ticks.length = unit(0.3, "cm"),  
       legend.position = "none",
       legend.title = element_text(size = 12),
       plot.title = element_text(size = 27),
@@ -382,9 +391,12 @@ for (metric in metrics) {
     ) +
     theme_minimal() +
     theme(
-      axis.text.x = element_text(angle = 45, hjust = 1, size = 30),
-      axis.text.y = element_text(size = 30),
-      axis.title = element_text(size = 30),
+      axis.text.x = element_text(angle = 45, hjust = 1, size = 30,color = "black"),
+      axis.text.y = element_text(size = 30, color = "black"),
+      axis.title = element_text(size = 31),
+      axis.line = element_line(color = "black", size = 1), 
+      axis.ticks = element_line(color = "black", size = 0.8),  
+      axis.ticks.length = unit(0.3, "cm"),  
       legend.position = "none",
       legend.title = element_text(size = 12),
       plot.title = element_text(size = 27),

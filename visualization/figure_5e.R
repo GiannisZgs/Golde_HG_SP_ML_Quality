@@ -16,7 +16,7 @@ library(RColorBrewer)
 library(cowplot)
 
 # Load data
-data_dir <- "/home/giannis/Documents/ECG HG paper/results_data"
+data_dir <- "./data"
 data <- fromJSON(txt = file.path(data_dir, "participant_id_results.json"), simplifyVector = FALSE)
 
 participant_id_path <- file.path(data_dir, "participant_id_results.json")

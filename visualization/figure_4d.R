@@ -15,7 +15,7 @@ library(grid)
 library(cowplot)
 library(ggrepel)
 
-data_dir = "/home/giannis/Documents/ECG HG paper/results_data" #your data_dir here
+data_dir = "./data" #your data_dir here
 data <- fromJSON(txt = file.path(data_dir,"manually_cleaned_participant_id_results.json"), simplifyVector = FALSE)
 
 fs <- 200
@@ -23,7 +23,7 @@ selected_participants <- c("p1","p5","p10","p39")
 selected_channels <- c("ch1", "ch2","ch3")
 
 # Create output directory if it doesn't exist
-output_dir <- file.path("..", "imgs_figures", "figure_4d")
+output_dir <- file.path(".", "imgs_figures", "figure_4d")
 if (!dir.exists(output_dir)) {
   dir.create(output_dir, recursive = TRUE)
 }
@@ -212,7 +212,10 @@ for (participant in selected_participants) {
         theme(
           plot.title = element_text(size = 14, face = "bold"),
           axis.title = element_text(size = 25),
-          axis.text = element_text(size = 25),
+          axis.text = element_text(size = 25, color = "black"),
+          axis.line = element_line(color = "black", size = 1), 
+          axis.ticks = element_line(color = "black", size = 0.8),  
+          axis.ticks.length = unit(0.3, "cm"),  
           legend.position = "bottom",
           legend.title = element_text(size = 10),
           legend.text = element_text(size = 25),
@@ -539,12 +542,12 @@ if (length(plot_list) > 0) {
   print(combined_plot)
   
   # Save the combined plot
-  ggsave(paste0(output_dir,"ecg_kmeans_with_features.png"), combined_plot, 
+  ggsave(file.path(output_dir,"ecg_kmeans_with_features.png"), combined_plot, 
          width = 15, height = 10 * length(selected_participants) / 2, dpi = 300, bg = "white")
 }
 
 # Also create high-quality individual plots
 for (plot_name in names(plot_list)) {
-  ggsave(paste0(output_dir, plot_name, "_features.png"), 
+  ggsave(file.path(output_dir, paste0(plot_name, "_features.png")), 
          plot_list[[plot_name]], width = 8, height = 6, dpi = 300, bg = "white")
 }

@@ -17,11 +17,11 @@ library(viridis)
 library(ggbeeswarm)
 
 # Load data
-data_dir <- "/home/giannis/Documents/ECG HG paper/results_data"
+data_dir <- "./data"
 data <- fromJSON(txt = file.path(data_dir, "participant_id_results.json"), simplifyVector = FALSE)
 
 # Create output directory
-output_dir <- file.path("..", "imgs_figures", "figure_5d_S12")
+output_dir <- file.path(".", "imgs_figures", "figure_5d_S12")
 if (!dir.exists(output_dir)) {
   dir.create(output_dir, recursive = TRUE)
 }
@@ -280,9 +280,12 @@ create_plot <- function(data, plot_type, x_var = "Channel", color_var = "Sensor"
     theme_minimal() +
     theme(
       legend.position = "none",
-      axis.text.x = element_text(angle = 45, hjust = 1, size = 31),
-      axis.text.y = element_text(size = 31),
+      axis.text.x = element_text(angle = 45, hjust = 1, size = 31,color = "black"),
+      axis.text.y = element_text(size = 31,color = "black"),
       axis.title = element_text(size = 31),
+      axis.line = element_line(color = "black", size = 1), 
+      axis.ticks = element_line(color = "black", size = 0.8),  
+      axis.ticks.length = unit(0.3, "cm"),  
       strip.text = element_text(size = 31),
       plot.title = element_text(size = 31),
       panel.grid.minor = element_blank(),
@@ -306,9 +309,9 @@ if (nrow(mse_data) > 0) {
                              "", "NRMSE")
   
   # Save plots
-  ggsave(paste0(output_dir, "mse_boxplot.png"), mse_boxplot, width = 8, height = 6, dpi = 300, bg = "white")
-  ggsave(paste0(output_dir, "mse_violin.png"), mse_violin, width = 8, height = 6, dpi = 300, bg = "white")
-  ggsave(paste0(output_dir, "mse_beeswarm.png"), mse_beeswarm, width = 8, height = 6, dpi = 300, bg = "white")
+  ggsave(file.path(output_dir, "mse_boxplot.png"), mse_boxplot, width = 8, height = 6, dpi = 300, bg = "white")
+  ggsave(file.path(output_dir, "mse_violin.png"), mse_violin, width = 8, height = 6, dpi = 300, bg = "white")
+  ggsave(file.path(output_dir, "mse_beeswarm.png"), mse_beeswarm, width = 8, height = 6, dpi = 300, bg = "white")
   
   cat("Created MSE plots with deep purple color\n")
 } else {
@@ -328,9 +331,9 @@ if (nrow(xcorr_data) > 0) {
                                "", "Cross-Correlation")
   
   # Save plots
-  ggsave(paste0(output_dir, "xcorr_boxplot.png"), xcorr_boxplot, width = 8, height = 6, dpi = 300, bg = "white")
-  ggsave(paste0(output_dir, "xcorr_violin.png"), xcorr_violin, width = 8, height = 6, dpi = 300, bg = "white")
-  ggsave(paste0(output_dir, "xcorr_beeswarm.png"), xcorr_beeswarm, width = 8, height = 6, dpi = 300, bg = "white")
+  ggsave(file.path(output_dir, "xcorr_boxplot.png"), xcorr_boxplot, width = 8, height = 6, dpi = 300, bg = "white")
+  ggsave(file.path(output_dir, "xcorr_violin.png"), xcorr_violin, width = 8, height = 6, dpi = 300, bg = "white")
+  ggsave(file.path(output_dir, "xcorr_beeswarm.png"), xcorr_beeswarm, width = 8, height = 6, dpi = 300, bg = "white")
   
   cat("Created XCORR plots with deep purple color\n")
 } else {
@@ -385,10 +388,10 @@ if (nrow(features_data) > 0) {
     
     # Save plots
     clean_name <- gsub(" ", "_", tolower(metric))
-    ggsave(paste0(output_dir, clean_name, "_boxplot.png"), boxplot, width = 8, height = 6, dpi = 300, bg = "white")
-    ggsave(paste0(output_dir, clean_name, "_violin.png"), violin, width = 8, height = 6, dpi = 300, bg = "white")
-    ggsave(paste0(output_dir, clean_name, "_beeswarm.png"), beeswarm, width = 8, height = 6, dpi = 300, bg = "white")
-    
+    ggsave(file.path(output_dir, paste0(clean_name, "_boxplot.png")), boxplot, width = 8, height = 6, dpi = 300, bg = "white")
+    ggsave(file.path(output_dir, paste0(clean_name, "_violin.png")), violin, width = 8, height = 6, dpi = 300, bg = "white")
+    ggsave(file.path(output_dir, paste0(clean_name, "_beeswarm.png")), beeswarm, width = 8, height = 6, dpi = 300, bg = "white")
+
     cat("Created plots for", metric_display, "\n")
   }
   
@@ -410,8 +413,11 @@ if (nrow(features_data) > 0) {
     ) +
     theme_minimal() +
     theme(
-      axis.text.x = element_text(angle = 45, hjust = 1, size = 25),
-      axis.text.y = element_text(size = 25),
+      axis.text.x = element_text(angle = 45, hjust = 1, size = 25, color = "black"),
+      axis.text.y = element_text(size = 25, color = "black"),
+      axis.line = element_line(color = "black", size = 1), 
+      axis.ticks = element_line(color = "black", size = 0.8),  
+      axis.ticks.length = unit(0.3, "cm"),  
       axis.title = element_text(size = 25),
       plot.title = element_text(size = 25),
       panel.grid.minor = element_blank(),
@@ -420,7 +426,7 @@ if (nrow(features_data) > 0) {
     ) +
     facet_grid(MetricDisplay ~ SensorLabel, scales = "free_y")
   
-  ggsave(paste0(output_dir, "all_features_boxplot.png"), combined_boxplot, 
+  ggsave(file.path(output_dir, "all_features_boxplot.png"), combined_boxplot, 
          width = 10, height = 12, dpi = 300, bg = "white")
   
   cat("Created combined features plot\n")
@@ -448,8 +454,11 @@ combined_boxplot_with_points <- ggplot(features_data, aes(x = ChannelLabel, y = 
   ) +
   theme_minimal() +
   theme(
-    axis.text.x = element_text(angle = 45, hjust = 1, size = 25),
-    axis.text.y = element_text(size = 25),
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 25, color = "black"),
+    axis.text.y = element_text(size = 25,color = "black"),
+    axis.line = element_line(color = "black", size = 1), 
+    axis.ticks = element_line(color = "black", size = 0.8),  
+    axis.ticks.length = unit(0.3, "cm"),  
     axis.title = element_text(size = 25),
     plot.title = element_text(size = 25),
     panel.grid.minor = element_blank(),
@@ -473,8 +482,11 @@ combined_violin <- ggplot(features_data, aes(x = ChannelLabel, y = Value, fill =
   ) +
   theme_minimal() +
   theme(
-    axis.text.x = element_text(angle = 45, hjust = 1, size = 25),
-    axis.text.y = element_text(size = 25),
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 25, color = "black"),
+    axis.text.y = element_text(size = 25, color = "black"),
+    axis.line = element_line(color = "black", size = 1), 
+    axis.ticks = element_line(color = "black", size = 0.8),  
+    axis.ticks.length = unit(0.3, "cm"),  
     axis.title = element_text(size = 25),
     plot.title = element_text(size = 25),
     panel.grid.minor = element_blank(),
@@ -495,8 +507,11 @@ combined_beeswarm <- ggplot(features_data, aes(x = ChannelLabel, y = Value, colo
   ) +
   theme_minimal() +
   theme(
-    axis.text.x = element_text(angle = 45, hjust = 1, size = 25),
-    axis.text.y = element_text(size = 25),
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 25, color = "black"),
+    axis.text.y = element_text(size = 25, color = "black"),
+    axis.line = element_line(color = "black", size = 1), 
+    axis.ticks = element_line(color = "black", size = 0.8),  
+    axis.ticks.length = unit(0.3, "cm"),  
     axis.title = element_text(size = 25),
     plot.title = element_text(size = 25),
     panel.grid.minor = element_blank(),
@@ -506,13 +521,13 @@ combined_beeswarm <- ggplot(features_data, aes(x = ChannelLabel, y = Value, colo
   facet_grid(MetricDisplay ~ SensorLabel, scales = "free_y")
 
 # Save the combined plots
-ggsave(paste0(output_dir, "all_features_boxplot_with_points.png"), combined_boxplot_with_points, 
+ggsave(file.path(output_dir, "all_features_boxplot_with_points.png"), combined_boxplot_with_points, 
        width = 10, height = 12, dpi = 300, bg = "white")
 
-ggsave(paste0(output_dir, "all_features_violin.png"), combined_violin, 
+ggsave(file.path(output_dir, "all_features_violin.png"), combined_violin, 
        width = 10, height = 12, dpi = 300, bg = "white")
 
-ggsave(paste0(output_dir, "all_features_beeswarm.png"), combined_beeswarm, 
+ggsave(file.path(output_dir, "all_features_beeswarm.png"), combined_beeswarm, 
        width = 10, height = 12, dpi = 300, bg = "white")
 
 cat("Created additional combined feature plots (boxplot with points, violin, beeswarm)\n")

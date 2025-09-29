@@ -15,8 +15,9 @@ library(cowplot)
 library(ggrepel)
 
 nans_removed = TRUE #true if processing has already been done
-data_dir <- "/home/giannis/Documents/ECG HG paper/results_data" 
-single_participant <- "p39"
+generate_all_participant_plots <- FALSE
+data_dir = "./data"
+single_participant <- "p5"
 
 if (nans_removed) {
   data <- fromJSON(txt = file.path(data_dir, "heartbeat_profiles_MA.json"), simplifyVector = FALSE)
@@ -45,7 +46,7 @@ channels <- c("ch1", "ch2", "ch3")
 sensors <- c("AgCl", "HG")
 
 # Create output directory if it doesn't exist
-output_dir <- file.path("..", "imgs_figures", "figure_5a_S9")
+output_dir <- file.path(".", "imgs_figures", "figure_5a_S9")
 if (!dir.exists(output_dir)) {
   dir.create(output_dir, recursive = TRUE)
 }
@@ -118,8 +119,8 @@ plot_list <- list()
 
 
 
-aggregated_dir <- paste0(output_dir, "aggregated/")
-raw_dir <- paste0(output_dir, "raw/")
+aggregated_dir <- file.path(output_dir, "aggregated")
+raw_dir <- file.path(output_dir, "raw")
 
 # Create directories if they don't exist
 if (!dir.exists(aggregated_dir)) dir.create(aggregated_dir, recursive = TRUE)
@@ -144,9 +145,13 @@ for (sensor_channel in unique(waveform_data_agg$SensorChannel)) {
     theme(
       plot.title = element_text(size = 30),
       axis.title = element_text(size = 30),
-      axis.text.y = element_text(size = 30),
-      axis.text.x = element_blank(),
-      axis.ticks.x = element_blank(),
+      axis.text.y = element_text(size = 30, color = "black"),
+      axis.text.x = element_blank(),  # Remove x-axis text
+      axis.line.x = element_line(color = "black", size = 1),  # Show x-axis line
+      axis.line.y = element_line(color = "black", size = 1),  # Show y-axis line
+      axis.ticks.y = element_line(color = "black", size = 0.8),  
+      axis.ticks.x = element_blank(),  # Remove x-axis ticks
+      axis.ticks.length = unit(0.3, "cm"),  
       panel.grid.major = element_line(color = "gray90"),
       panel.grid.minor = element_line(color = "gray95")
     )
@@ -176,7 +181,7 @@ if (length(plot_list_agg) > 0) {
   print(combined_plot_agg)
   
   # Save the combined plot
-  ggsave(paste0(aggregated_dir, "overlay_waveforms_aggregated.png"), combined_plot_agg, 
+  ggsave(file.path(aggregated_dir, "overlay_waveforms_aggregated.png"), combined_plot_agg, 
          width = 15, height = 10, dpi = 300, bg = "white")
 }
 
@@ -200,9 +205,13 @@ for (sensor_channel in unique(waveform_data$SensorChannel)) {
     theme(
       plot.title = element_text(size = 30),
       axis.title = element_text(size = 30),
-      axis.text.y = element_text(size = 30),
-      axis.text.x = element_blank(),
-      axis.ticks.x = element_blank(),
+      axis.text.y = element_text(size = 30, color = "black"),
+      axis.text.x = element_blank(),  # Remove x-axis text
+      axis.line.x = element_line(color = "black", size = 1),  # Show x-axis line
+      axis.line.y = element_line(color = "black", size = 1),  # Show y-axis line
+      axis.ticks.y = element_line(color = "black", size = 0.8),  
+      axis.ticks.x = element_blank(),  # Remove x-axis ticks
+      axis.ticks.length = unit(0.3, "cm"),  
       panel.grid.major = element_line(color = "gray90"),
       panel.grid.minor = element_line(color = "gray95")
     )
@@ -233,14 +242,14 @@ if (length(plot_list_raw) > 0) {
   print(combined_plot_raw)
   
   # Save the combined plot
-  ggsave(paste0(raw_dir, "overlay_waveforms_raw.png"), combined_plot_raw, 
+  ggsave(file.path(raw_dir, "overlay_waveforms_raw.png"), combined_plot_raw, 
          width = 15, height = 10, dpi = 300, bg = "white")
 }
 
 
-"Example for single participant"
+"single participant"
 
-single_participant_dir <- paste0(output_dir, "single_participant/")
+single_participant_dir <- file.path(output_dir, "single_participant")
 if (!dir.exists(single_participant_dir)) dir.create(single_participant_dir, recursive = TRUE)
 
 
@@ -268,9 +277,13 @@ for (sensor_channel in unique(waveform_data$SensorChannel)) {
     theme(
       plot.title = element_text(size = 30),
       axis.title = element_text(size = 30),
-      axis.text.y = element_text(size = 30),
-      axis.text.x = element_blank(),
-      axis.ticks.x = element_blank(),
+      axis.text.y = element_text(size = 30, color = "black"),
+      axis.text.x = element_blank(),  # Remove x-axis text
+      axis.line.x = element_line(color = "black", size = 1),  # Show x-axis line
+      axis.line.y = element_line(color = "black", size = 1),  # Show y-axis line
+      axis.ticks.y = element_line(color = "black", size = 0.8),  
+      axis.ticks.x = element_blank(),  # Remove x-axis ticks
+      axis.ticks.length = unit(0.3, "cm"),  
       panel.grid.major = element_line(color = "gray90"),
       panel.grid.minor = element_line(color = "gray95")
     )
@@ -302,20 +315,18 @@ if (length(plot_list_single) > 0) {
   print(combined_plot_single)
   
   # Save the combined plot
-  ggsave(paste0(single_participant_dir, "single_participant_raw_", single_participant, ".png"), 
+  ggsave(file.path(single_participant_dir,paste0("single_participant_raw_", single_participant, ".png")), 
          combined_plot_single, width = 15, height = 10, dpi = 300, bg = "white")
   
   # Also save individual plots for this participant
   for (sensor_channel in names(plot_list_single)) {
     clean_name <- gsub(" ", "_", sensor_channel)
-    ggsave(paste0(single_participant_dir, single_participant, "_", clean_name, ".png"), 
+    ggsave(file.path(single_participant_dir, paste0(single_participant, "_", clean_name, ".png")), 
            plot_list_single[[sensor_channel]], width = 6, height = 4, dpi = 300, bg = "white")
   }
 }
 
 # Loop through all participants to create individual plots for each
-generate_all_participant_plots <- FALSE
-
 if (generate_all_participant_plots) {
   for (current_participant in all_participants) {
     participant_plot_list <- list()
@@ -339,8 +350,13 @@ if (generate_all_participant_plots) {
         theme(
           plot.title = element_text(size = 25),
           axis.title = element_text(size = 25),
-          axis.text.y = element_text(size = 25),
-          axis.text.x = element_blank(),
+          axis.text.y = element_text(size = 30, color = "black"),
+          axis.text.x = element_blank(),  # Remove x-axis text
+          axis.line.x = element_line(color = "black", size = 1),  # Show x-axis line
+          axis.line.y = element_line(color = "black", size = 1),  # Show y-axis line
+          axis.ticks.y = element_line(color = "black", size = 0.8),  
+          axis.ticks.x = element_blank(),  # Remove x-axis ticks
+          axis.ticks.length = unit(0.3, "cm"),  
           axis.ticks.x = element_blank()
         )
       
@@ -362,10 +378,10 @@ if (generate_all_participant_plots) {
         plot_layout(guides = "collect") & theme(legend.position = "none")
       
       # Save the combined plot for this participant
-      participant_dir <- paste0(single_participant_dir, current_participant, "/")
+      participant_dir <- paste0(single_participant_dir, current_participant)
       if (!dir.exists(participant_dir)) dir.create(participant_dir, recursive = TRUE)
       
-      ggsave(paste0(participant_dir, "raw_waveforms.png"), 
+      ggsave(file.path(participant_dir, "raw_waveforms.png"), 
              combined_plot_p, width = 15, height = 10, dpi = 300, bg = "white")
     }
   }

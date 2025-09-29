@@ -16,7 +16,7 @@ library(cowplot)
 library(ggrepel)
 library(viridis)
 
-data_dir <- '/home/giannis/Documents/ECG HG paper/results_data' #your data_dir here
+data_dir <- "./data" #your data_dir here
 fs <- 200
 participant <- "p10" #c("p1","p5","p10","p39")
 sensor1 <- "AgCl"

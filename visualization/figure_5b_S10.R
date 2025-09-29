@@ -15,13 +15,13 @@ library(cowplot)
 library(ggrepel)
 library(RColorBrewer)
 
-data_dir <- "/home/giannis/Documents/ECG HG paper/results_data"
+data_dir = "./data"
 data <- fromJSON(txt = file.path(data_dir, "channel_id_results.json"), simplifyVector = FALSE)
 fs <- 200
 sensors <- c("AgCl", "HG")
 
 # Create output directory
-output_dir <- file.path("..", "imgs_figures", "figure_5b_S10")
+output_dir <- file.path(".", "imgs_figures", "figure_5b_S10")
 if (!dir.exists(output_dir)) {
   dir.create(output_dir, recursive = TRUE)
 }
