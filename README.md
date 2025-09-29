@@ -1,6 +1,6 @@
 # Systematic Benchmarking of a Noise-tolerant Conductive Hydrogel electrode for Epidermal Bioelectronics
 
-This repository contains the codebase for analyzing and comparing ECG signals recorded with conventional AgCl electrodes and polymer-printed hydrogel (PPHG) electrodes. The analysis pipeline processes raw ECG data, extracts features, performs clustering analysis, and generates visualizations for quality comparison.
+This repository contains the codebase for analyzing and comparing ECG signals recorded with conventional AgCl electrodes and polymer-printed hydrogel (PPHG) electrodes, for the paper "Systematic Benchmarking of a Noise-tolerant Conductive Hydrogel electrode for Epidermal Bioelectronics". The analysis pipeline processes raw ECG data, extracts features, performs clustering analysis, and generates visualizations for quality comparison. Additionally, the comparison is extended to other biosignals modalities, EEG, EMG and EOG.
 
 ## Repository Structure
 
@@ -117,8 +117,6 @@ The main outcomes of the ECG analysis pipeline:
 
 ## Additional Modalities Analysis
 
-Besides the ECG analysis pipeline, this repository also includes scripts for analyzing other bio-signal modalities:
-
 ### EEG Analysis
 
 Run the following scripts to analyze EEG data with and without preprocessing:
@@ -126,32 +124,43 @@ Run the following scripts to analyze EEG data with and without preprocessing:
 ```matlab
 cd scripts/other_modalities
 ```
-1. Analysis without preprocessing:
-```matlab
-run('EEG_without_preprocessing.m')
-```
-This script performs frequency domain analysis of raw EEG data without filtering or artifact removal, focusing on delta band power differences between eyes-open and eyes-closed conditions.
 
-2. Analysis with preprocessing:
+1. Analysis with preprocessing:
 ```matlab
 run('EEG_with_preprocessing.m')
 ```
-This script applies bandpass filtering and artifact removal to EEG data before analysis, allowing comparison of the impact of preprocessing on spectral power differences.
-
+Performs full EEG analysis with bandpass filter (0.5–40 Hz) and detrending applied directly in MATLAB code. The workflow includes PSD computation, spectrogram and CWT visualization, segmentation into baseline / thinking / eyes-closed conditions, delta power extraction (0.5–4 Hz), statistical comparison using t-tests, and time-resolved power plots with shaded intervals for each condition. The results provided from this script were imported into OriginLab for plotting.
 ### EMG Analysis
 
-For EMG signal processing and visualization:
+2. Analysis without preprocessing:
+```matlab
+run('EEG_without_preprocessing.m')
+```
+Implements the same analysis pipeline as EEG_with_preprocessing.m, except that filtering and detrending are performed beforehand using MATLAB’s Signal Analyzer GUI. Used to compare results from GUI-preprocessed data versus in-code preprocessing. The results provided from this script were imported into OriginLab for plotting.
+
+
+### EMG Analysis
 
 ```matlab
 run('EMG_with_preprocessing.m')
 ```
 
-This script loads, preprocesses, and compares EMG signals from AgCl and hydrogel electrodes, generating:
-- Time-domain visualizations with signal envelopes
-- Frequency-domain analysis
-- Time-frequency representations (spectrograms and scalograms)
-- Peak-to-peak voltage comparisons between electrode types
+Reads EMG data from AgCl and hydrogel electrodes, applies preprocessing via the helper function preprocess_emg_complete_adv.m, and then performs envelope extraction (Hilbert transform), spectrogram and CWT plotting, and peak-to-peak voltage analysis with comparative bar charts. The results provided from this script were imported into OriginLab for plotting.
 
+### EOG Analysis
 
+```matlab
+run('EOG_with_preprocessing_and_analysis_complete_code 1.m')
+```
 
+Processes raw EOG recordings by applying multiple cleaning steps (filtering, notch, baseline correction, detrending, wavelet denoising, median filtering). The cleaned data are segmented into defined activities (“look up”, “blink 3x”, “look down”), from which maximum, minimum, and peak-to-peak values are extracted. Statistical analysis includes one-way ANOVA with Tukey post-hoc tests, and visual outputs include preprocessing stage plots and bar graphs for amplitude comparisons. The results provided from this script were imported into OriginLab for plotting.
+
+### Relaxation Times Plot
+Handled by the #utils/process_EIS_triplets.m utility.
+
+```matlab
+run('utils/process_EIS_triplets.m')
+```
+
+Accepts 3 text( ASCII .txt) or Excel (.xlsx) files of the EIS triplicate raw measurements. It calculates dielectric parameters (permittivity, modulus, loss tangent) across frequencies using the relavant formulas, outputs mean ± SD values to Excel file with headers, and generates error-bar plots. The results provided from it about electrode dielectric behavior and relaxation times are imported into OriginLab for plotting.
 

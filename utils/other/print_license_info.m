@@ -7,7 +7,7 @@ function print_license_info()
     fprintf('  Healthcare Engineering Innovation Center  \n');
     fprintf('  Center for Separations and Catalysis  \n');
     fprintf('  Abu Dhabi, United Arab Emirates, 2025  \n');
-    fprintf('  Ioannis Ziogas, Nazmi Alsaafeen  \n');
+    fprintf('  Ioannis Ziogas, Nazmi Alsaafeen, Adil Rehman  \n');
     fprintf('  giannisziogas5@gmail.com  \n');
     fprintf('  This program comes with ABSOLUTELY NO WARRANTY.   \n');
     fprintf('  This software is released under the GNU General Public License v3.0.  \n');
