@@ -14,7 +14,7 @@ library(scales)
 library(grid)
 library(cowplot)
 
-lead_to_plot <- 3  # Choose lead 1, 2, or 3
+lead_to_plot <- 1  # Choose lead 1, 2, or 3
 
 data_dir <- file.path('.', 'data')
 data <- fromJSON(txt = file.path(data_dir,'ECG_biofouling_data.json'), simplifyVector = FALSE)
@@ -50,7 +50,7 @@ create_recording_plot <- function(recording_data, recording_num, lead_to_plot) {
   p <- ggplot(plot_data, aes(x = Time, y = Amplitude)) +
     geom_line(size = 0.3, color = "#0066CC") +
     labs(
-      title = paste("Recording", recording_num, "- SNR =", round(snr_value, 2)),
+      title = paste("Recording", recording_num, "- SNR =", round(snr_value, 2), " dB"),
       x = "Time (s)",
       y = "Amplitude (\u00B5V)"
     ) +
